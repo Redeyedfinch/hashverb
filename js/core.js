@@ -148,6 +148,21 @@ var HVUI = (function () {
     return (parts[0].charAt(0) + (parts.length > 1 ? parts[parts.length - 1].charAt(0) : '')).toUpperCase();
   }
 
+  /* ---------------- identity (USN / mobile) ----------------
+     Same rules as the arcade: a 10-digit Indian mobile is accepted in place of
+     a USN, and normalised to bare digits so "+91 98765 43210" and "9876543210"
+     are one person. Returns the canonical string, or '' if it is neither. */
+  function normId(raw) {
+    var s = String(raw == null ? '' : raw).trim().toUpperCase().replace(/\s+/g, '');
+    var d = s.replace(/\D/g, '');
+    if (d.length === 12 && d.indexOf('91') === 0) d = d.slice(2);
+    else if (d.length === 11 && d.charAt(0) === '0') d = d.slice(1);
+    if (/^[6-9][0-9]{9}$/.test(d)) return d;            /* a mobile number */
+    if (/^[A-Z0-9/\-]{4,20}$/.test(s)) return s;        /* a USN */
+    return '';
+  }
+  function validId(raw) { return !!normId(raw); }
+
   /* Loading placeholder node. */
   function loading(label) {
     return el('div', { class: 'loading-wrap' }, [
@@ -160,6 +175,7 @@ var HVUI = (function () {
     $: $, $$: $$, el: el, esc: esc, toast: toast,
     modal: modal, closeModal: close, footer: footer, confirm: confirm,
     initMotion: initMotion, timeAgo: timeAgo, fmtDate: fmtDate, initials: initials,
+    normId: normId, validId: validId,
     loading: loading, empty: empty
   };
 })();

@@ -87,8 +87,50 @@
   function enterApp(me) {
     gate.classList.add('hidden');
     app.classList.remove('hidden');
+    /* First-run: every member links a USN (or mobile) before entering, so their
+       account connects to club registration and game data. They can change it
+       later in Profile, but they cannot skip it here. */
+    if (!me.usn) { renderUsnGate(me); return; }
     renderShell(me);
     routeFromHash(me);
+  }
+
+  function renderUsnGate(me) {
+    app.innerHTML = '';
+    var input = el('input', { placeholder: 'USN or 10-digit mobile', autocomplete: 'off',
+      value: me.usn || '' });
+    var msg = el('div', {});
+    var btn = el('button', { class: 'btn primary block', onclick: save }, 'Save & continue');
+
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') save(); });
+
+    app.appendChild(el('div', { class: 'gate' }, el('div', { class: 'gate-card card' }, [
+      el('h1', { text: '#Hash' }),
+      el('div', { class: 'eyebrow', text: '// one more thing' }),
+      el('p', { class: 'section-sub', style: 'margin-top:10px',
+        text: 'Welcome, ' + esc(String(me.name || me.email).split(/\s+/)[0]) + '. Link your USN so your account connects to club records. No USN? A 10-digit mobile works too.' }),
+      el('div', { class: 'field', style: 'margin-top:14px' }, [ input ]),
+      msg,
+      el('div', { style: 'margin-top:12px' }, [ btn ]),
+      el('button', { class: 'btn ghost small', style: 'margin-top:10px',
+        onclick: function () { HVAuth.signOut().then(function () { showGate(); }); } }, 'Sign out instead')
+    ])));
+    setTimeout(function () { input.focus(); }, 40);
+
+    function save() {
+      var canonical = HVUI.normId(input.value);
+      if (!canonical) { flash('Enter a valid USN or a 10-digit mobile number.', true); return; }
+      btn.disabled = true;
+      HVApi.hv('usn.link', { usn: canonical }).then(function (r) {
+        btn.disabled = false;
+        if (r && r.ok) { HVAuth.refresh().then(function (fresh) { enterApp(fresh); }); }
+        else flash(HVApi.err(r, 'Could not save that.'), true);
+      });
+    }
+    function flash(text, bad) {
+      msg.innerHTML = '';
+      msg.appendChild(el('div', { class: 'banner ' + (bad ? 'bad' : 'good'), style: 'margin-top:10px', text: text }));
+    }
   }
 
   function renderShell(me) {

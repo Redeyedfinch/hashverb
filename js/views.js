@@ -415,7 +415,9 @@ var HVViews = (function () {
         el('div', { class: 'field' }, [ usnIn ]),
         el('div', { style: 'margin-top:10px' }, [
           el('button', { class: 'btn primary', onclick: function () {
-            HVApi.hv('usn.link', { usn: usnIn.value.trim() }).then(function (r) {
+            var canonical = HVUI.normId(usnIn.value);
+            if (usnIn.value.trim() && !canonical) { toast('Enter a valid USN or 10-digit mobile.', true); return; }
+            HVApi.hv('usn.link', { usn: canonical }).then(function (r) {
               if (r && r.ok) { toast('Saved.'); HVAuth.refresh(); }
               else toast(HVApi.err(r, 'Could not save.'), true);
             });

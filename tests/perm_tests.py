@@ -60,23 +60,28 @@ t('hasAny: true if the user holds any one of the keys', function () {
 /* ----- nav gating: the exact screens each role sees ----- */
 
 t('nav: an admin (star) sees every nav item', function () {
-  arrEq(HVPerm.navFor(['*']), ['home', 'members', 'roles', 'audit', 'profile']);
+  arrEq(HVPerm.navFor(['*']), ['home', 'teams', 'members', 'roles', 'audit', 'profile']);
 });
 
-t('nav: a plain member sees only home and profile', function () {
-  arrEq(HVPerm.navFor(['tasks.view', 'files.upload']), ['home', 'profile']);
+t('nav: a plain member sees home, teams and profile', function () {
+  arrEq(HVPerm.navFor(['tasks.view', 'files.upload']), ['home', 'teams', 'profile']);
+});
+
+t('nav: teams is open to everyone (directory is not gated)', function () {
+  arrEq(HVPerm.navFor([]), ['home', 'teams', 'profile']);
 });
 
 t('nav: members.view alone opens Members but NOT Roles or Activity', function () {
-  arrEq(HVPerm.navFor(['members.view']), ['home', 'members', 'profile']);
+  arrEq(HVPerm.navFor(['members.view']), ['home', 'teams', 'members', 'profile']);
 });
 
 t('nav: roles.manage opens Members, Roles and Activity', function () {
-  arrEq(HVPerm.navFor(['roles.manage']), ['home', 'members', 'roles', 'audit', 'profile']);
+  arrEq(HVPerm.navFor(['roles.manage']), ['home', 'teams', 'members', 'roles', 'audit', 'profile']);
 });
 
-t('canSeeView: gate matches navFor, and home/profile are always visible', function () {
+t('canSeeView: gate matches navFor, and home/teams/profile are always visible', function () {
   ok(HVPerm.canSeeView([], 'home'));
+  ok(HVPerm.canSeeView([], 'teams'));
   ok(HVPerm.canSeeView([], 'profile'));
   ok(!HVPerm.canSeeView([], 'members'));
   ok(!HVPerm.canSeeView(['members.view'], 'roles'));

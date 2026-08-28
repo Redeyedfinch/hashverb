@@ -46,9 +46,13 @@ var HVPerm = (function () {
       { key: 'roles.manage',  label: 'Manage roles & members',    desc: 'Create roles, grant/revoke, suspend. Admin power.' }
     ]},
     { group: 'Teams', keys: [
-      { key: 'teams.view',        label: 'View teams' },
-      { key: 'teams.manage',      label: 'Create & edit any team' },
-      { key: 'teams.manage.own',  label: 'Manage own team', desc: 'Team leads: members, tasks, files, flags for their team.' }
+      { key: 'teams.view',          label: 'View teams' },
+      { key: 'teams.create',        label: 'Create teams' },
+      { key: 'teams.manage',        label: 'Manage ANY team', desc: 'Org-wide team admin: edit, archive, and manage members of every team.' },
+      { key: 'teams.manage.own',    label: 'Edit own team', desc: 'Usually granted by being a team lead/co-lead, not org-wide.' },
+      { key: 'teams.members.manage', label: 'Add/remove team members', desc: 'Team leads and co-leads.' },
+      { key: 'teams.lead.assign',   label: 'Appoint co-leads & transfer lead', desc: 'Team leads only.' },
+      { key: 'teams.archive',       label: 'Archive a team' }
     ]},
     { group: 'Events', keys: [
       { key: 'events.view',       label: 'View events' },
@@ -99,6 +103,7 @@ var HVPerm = (function () {
    */
   var NAV = [
     { id: 'home',    label: 'Home',    gate: null },
+    { id: 'teams',   label: 'Teams',   gate: null },   /* directory is open to any signed-in member */
     { id: 'members', label: 'Members', gate: ['members.view', 'roles.manage'] },
     { id: 'roles',   label: 'Roles',   gate: ['roles.manage'] },
     { id: 'audit',   label: 'Activity', gate: ['roles.manage'] },

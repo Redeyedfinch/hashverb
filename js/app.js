@@ -11,10 +11,10 @@
   var motion = HVUI.initMotion();
 
   var VIEWS = {
-    home: HVViews.home, members: HVViews.members, roles: HVViews.roles,
+    home: HVViews.home, teams: HVTeamsView, members: HVViews.members, roles: HVViews.roles,
     audit: HVViews.audit, profile: HVViews.profile
   };
-  var LABEL = { home: 'Home', members: 'Members', roles: 'Roles', audit: 'Activity', profile: 'Profile' };
+  var LABEL = { home: 'Home', teams: 'Teams', members: 'Members', roles: 'Roles', audit: 'Activity', profile: 'Profile' };
 
   var app = HVUI.$('#app');
   var gate = HVUI.$('#gate');
@@ -180,6 +180,10 @@
     highlightNav(id);
     var host = HVUI.$('#viewHost');
     if (!host) return;
+    /* a view arrived at through the nav starts fresh (e.g. Teams → directory,
+       not the last team the user had open). Internal navigation bypasses the
+       router and so is not reset. */
+    if (VIEWS[id] && typeof VIEWS[id].reset === 'function') VIEWS[id].reset();
     try {
       VIEWS[id].render(host, {
         me: me,

@@ -26,9 +26,11 @@ var HV_CONFIG = {
      friendly "not configured yet" screen instead of a broken Google button. */
   OAUTH_CLIENT_ID: 'PASTE-YOUR-OAUTH-CLIENT-ID.apps.googleusercontent.com',
 
-  /* The Apps Script web app. Same project that serves the club site + games;
-     the hv.* API is reached by POSTing to this URL. */
-  EXEC_URL: 'https://script.google.com/macros/s/AKfycbysCzWl9_dnfKGRdstzRWPFUqnGRrMFG3Z2iWoOaPnhvwJCsQEd8rreVoaJMPVjO9ve/exec',
+  /* The Hashverb OS Apps Script web app — its OWN project, independent of the
+     games. Paste its /exec URL here after you create and deploy it (see
+     apps/os/README in the backend repo). The hv.* API is reached by POSTing
+     to this URL. It is NOT the games' /exec. */
+  EXEC_URL: 'PASTE-YOUR-HASHVERB-OS-EXEC-URL-ENDING-IN/exec',
 
   /* Session token lives here (first-party origin → survives reloads, including
      on iOS, unlike anything inside the Apps Script iframe). */
@@ -39,5 +41,6 @@ var HV_CONFIG = {
   APP_NAME: '#Hash'
 };
 
-/* True until the client ID has actually been filled in. */
-HV_CONFIG.CONFIGURED = HV_CONFIG.OAUTH_CLIENT_ID.indexOf('PASTE-') !== 0;
+/* True only once BOTH the client ID and the OS /exec URL have been filled in. */
+HV_CONFIG.CONFIGURED = HV_CONFIG.OAUTH_CLIENT_ID.indexOf('PASTE-') !== 0
+                    && HV_CONFIG.EXEC_URL.indexOf('PASTE-') !== 0;

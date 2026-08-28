@@ -11,10 +11,10 @@
   var motion = HVUI.initMotion();
 
   var VIEWS = {
-    home: HVViews.home, teams: HVTeamsView, members: HVViews.members, roles: HVViews.roles,
-    audit: HVViews.audit, profile: HVViews.profile
+    home: HVViews.home, events: HVEventsView, teams: HVTeamsView, members: HVViews.members,
+    roles: HVViews.roles, audit: HVViews.audit, profile: HVViews.profile
   };
-  var LABEL = { home: 'Home', teams: 'Teams', members: 'Members', roles: 'Roles', audit: 'Activity', profile: 'Profile' };
+  var LABEL = { home: 'Home', events: 'Events', teams: 'Teams', members: 'Members', roles: 'Roles', audit: 'Activity', profile: 'Profile' };
 
   var app = HVUI.$('#app');
   var gate = HVUI.$('#gate');

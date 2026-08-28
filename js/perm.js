@@ -55,10 +55,14 @@ var HVPerm = (function () {
       { key: 'teams.archive',       label: 'Archive a team' }
     ]},
     { group: 'Events', keys: [
-      { key: 'events.view',       label: 'View events' },
-      { key: 'events.create',     label: 'Create events' },
-      { key: 'events.manage',     label: 'Edit events & roadmaps' },
-      { key: 'events.stage.move', label: 'Move an event between stages' }
+      { key: 'events.view',           label: 'View events' },
+      { key: 'events.create',         label: 'Create events' },
+      { key: 'events.manage',         label: 'Manage ANY event', desc: 'Org-wide event admin: edit, stage, archive, and organizers of every event.' },
+      { key: 'events.manage.own',     label: 'Edit own event & roadmap', desc: 'Usually from being an event manager/organizer, not org-wide.' },
+      { key: 'events.stage.move',     label: 'Move an event between stages', desc: 'Event managers.' },
+      { key: 'events.members.manage', label: 'Add/remove organizers' },
+      { key: 'events.lead.assign',    label: 'Appoint organizers & transfer manager', desc: 'Event managers only.' },
+      { key: 'events.archive',        label: 'Archive an event' }
     ]},
     { group: 'Work', keys: [
       { key: 'tasks.view',     label: 'View tasks' },
@@ -103,6 +107,7 @@ var HVPerm = (function () {
    */
   var NAV = [
     { id: 'home',    label: 'Home',    gate: null },
+    { id: 'events',  label: 'Events',  gate: null },   /* directory is open to any signed-in member */
     { id: 'teams',   label: 'Teams',   gate: null },   /* directory is open to any signed-in member */
     { id: 'members', label: 'Members', gate: ['members.view', 'roles.manage'] },
     { id: 'roles',   label: 'Roles',   gate: ['roles.manage'] },

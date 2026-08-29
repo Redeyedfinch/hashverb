@@ -149,6 +149,12 @@ var HVEventsView = (function () {
       budgetCard.appendChild(budgetHost);
       host.appendChild(budgetCard);
       HVBudgetBoard.render(budgetHost, 'event', ev.id);
+
+      /* meetings */
+      var mtgCard = el('div', { class: 'card' }, [ el('h3', { text: 'Meetings' }) ]);
+      var mtgHost = el('div', { style: 'margin-top:10px' });
+      mtgCard.appendChild(mtgHost); host.appendChild(mtgCard);
+      HVMeetings.render(mtgHost, 'event', ev.id);
     });
     function back() { state.openId = null; view.render(host, ctx); }
   }

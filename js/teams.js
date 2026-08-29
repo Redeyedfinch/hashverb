@@ -168,6 +168,20 @@ var HVTeamsView = (function () {
       budgetCard.appendChild(budgetHost);
       host.appendChild(budgetCard);
       HVBudgetBoard.render(budgetHost, 'team', tm.id);
+
+      /* meetings */
+      var mtgCard = el('div', { class: 'card' }, [ el('h3', { text: 'Meetings' }) ]);
+      var mtgHost = el('div', { style: 'margin-top:10px' });
+      mtgCard.appendChild(mtgHost); host.appendChild(mtgCard);
+      HVMeetings.render(mtgHost, 'team', tm.id);
+
+      /* team check-ins (leads/co-leads only; the view refuses others) */
+      if (caps.manageMembers) {
+        var ciCard = el('div', { class: 'card' }, [ el('h3', { text: 'Weekly check-ins' }) ]);
+        var ciHost = el('div', { style: 'margin-top:10px' });
+        ciCard.appendChild(ciHost); host.appendChild(ciCard);
+        HVCheckins.team(ciHost, tm.id);
+      }
     });
 
     function back() { state.openId = null; view.render(host, ctx); }

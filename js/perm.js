@@ -79,9 +79,7 @@ var HVPerm = (function () {
       { key: 'budgets.approve', label: 'Approve ANY budget', desc: 'Org-wide finance approver. Normally budgets are approved by the team/event manager; requesting is open to members.' }
     ]},
     { group: 'People ops', keys: [
-      { key: 'progress.submit',  label: 'Submit weekly check-ins' },
-      { key: 'blockers.report',  label: 'Report blockers' },
-      { key: 'meetings.manage',  label: 'Schedule & run meetings' }
+      { key: 'meetings.manage', label: 'Manage org & any meeting', desc: 'Org-wide meeting manager. Team/event meetings are managed by their manager. Weekly check-ins are open to everyone.' }
     ]}
   ];
 

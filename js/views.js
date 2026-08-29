@@ -54,6 +54,11 @@ var HVViews = (function () {
       host.appendChild(tasksCard);
       HVTaskBoard.myTasks(myTasksHost);
 
+      /* weekly check-in */
+      var ciCard = el('div', { class: 'card', style: 'margin-top:16px' });
+      host.appendChild(ciCard);
+      HVCheckins.card(ciCard);
+
       /* announcements */
       var annCard = el('div', { class: 'card', style: 'margin-top:16px' });
       host.appendChild(annCard);

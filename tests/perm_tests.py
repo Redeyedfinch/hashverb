@@ -60,7 +60,7 @@ t('hasAny: true if the user holds any one of the keys', function () {
 /* ----- nav gating: the exact screens each role sees ----- */
 
 t('nav: an admin (star) sees every nav item', function () {
-  arrEq(HVPerm.navFor(['*']), ['home', 'events', 'teams', 'flags', 'members', 'roles', 'audit', 'profile']);
+  arrEq(HVPerm.navFor(['*']), ['home', 'events', 'teams', 'flags', 'command', 'members', 'roles', 'audit', 'profile']);
 });
 
 t('nav: a plain member sees home, events, teams, flags and profile', function () {
@@ -69,6 +69,10 @@ t('nav: a plain member sees home, events, teams, flags and profile', function ()
 
 t('nav: open directories (events, teams, flags) show for everyone', function () {
   arrEq(HVPerm.navFor([]), ['home', 'events', 'teams', 'flags', 'profile']);
+});
+
+t('nav: reports.view opens the Command center', function () {
+  arrEq(HVPerm.navFor(['reports.view']), ['home', 'events', 'teams', 'flags', 'command', 'profile']);
 });
 
 t('nav: members.view alone opens Members but NOT Roles or Activity', function () {

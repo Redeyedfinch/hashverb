@@ -30,6 +30,11 @@ var HVViews = (function () {
         ])
       ]));
 
+      /* at-a-glance personal tiles */
+      var tilesHost = el('div', { style: 'margin-bottom:16px' });
+      host.appendChild(tilesHost);
+      HVDash.homeTiles(tilesHost);
+
       /* quick-links grid, gated by permission */
       var links = [];
       if (HVPerm.canSeeView(me.perms, 'members')) links.push(link('👥', 'Members', 'Directory, roles & access', 'members'));

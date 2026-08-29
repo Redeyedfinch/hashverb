@@ -80,6 +80,9 @@ var HVPerm = (function () {
     ]},
     { group: 'People ops', keys: [
       { key: 'meetings.manage', label: 'Manage org & any meeting', desc: 'Org-wide meeting manager. Team/event meetings are managed by their manager. Weekly check-ins are open to everyone.' }
+    ]},
+    { group: 'Insights', keys: [
+      { key: 'reports.view', label: 'Leadership command center', desc: 'The org-wide dashboard: team health, flags, approvals, overdue work, activity.' }
     ]}
   ];
 
@@ -102,6 +105,7 @@ var HVPerm = (function () {
     { id: 'events',  label: 'Events',  gate: null },   /* directory is open to any signed-in member */
     { id: 'teams',   label: 'Teams',   gate: null },   /* directory is open to any signed-in member */
     { id: 'flags',   label: 'Flags',   gate: null },   /* everyone sees flags relevant to them */
+    { id: 'command', label: 'Command', gate: ['reports.view'] },
     { id: 'members', label: 'Members', gate: ['members.view', 'roles.manage'] },
     { id: 'roles',   label: 'Roles',   gate: ['roles.manage'] },
     { id: 'audit',   label: 'Activity', gate: ['roles.manage'] },

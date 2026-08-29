@@ -54,6 +54,11 @@ var HVViews = (function () {
       host.appendChild(tasksCard);
       HVTaskBoard.myTasks(myTasksHost);
 
+      /* announcements */
+      var annCard = el('div', { class: 'card', style: 'margin-top:16px' });
+      host.appendChild(annCard);
+      HVAnnounce.render(annCard, me);
+
       function link(icon, title, sub, id) {
         return el('button', {
           class: 'tile', style: 'text-align:left;cursor:pointer',

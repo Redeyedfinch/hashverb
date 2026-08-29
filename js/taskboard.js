@@ -134,6 +134,13 @@ var HVTaskBoard = (function () {
       });
     }});
 
+    /* comments thread on an existing task */
+    if (t) {
+      var cHost = el('div', {});
+      body.appendChild(el('div', { class: 'field' }, [ el('label', { text: 'Discussion' }), cHost ]));
+      HVComments.thread(cHost, 'task', t.id);
+    }
+
     HVUI.modal({ title: isNew ? 'New task' : 'Task', body: body, foot: HVUI.footer(footSpecs) });
   }
 

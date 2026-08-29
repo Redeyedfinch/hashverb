@@ -70,7 +70,13 @@ var HVFlagsView = (function () {
     var body = fl.detail ? el('p', { class: 'small', style: 'margin:8px 0 0;white-space:pre-wrap', text: fl.detail }) : null;
     var actions = el('div', { class: 'row wrap', style: 'gap:6px;margin-top:10px' });
     flagActions(actions, host, ctx, fl);
-    return el('div', { class: 'card', style: 'border-left:6px solid ' + (STATUS_COLOR[fl.status] || 'var(--pink)') }, [ head, meta, body, actions ]);
+    /* discussion (collapsed) */
+    var discussHost = el('div', { style: 'margin-top:10px;display:none' });
+    actions.appendChild(el('button', { class: 'btn ghost small', onclick: function () {
+      if (discussHost.style.display === 'none') { discussHost.style.display = 'block'; HVComments.thread(discussHost, 'flag', fl.id); }
+      else discussHost.style.display = 'none';
+    } }, '💬 Discuss'));
+    return el('div', { class: 'card', style: 'border-left:6px solid ' + (STATUS_COLOR[fl.status] || 'var(--pink)') }, [ head, meta, body, actions, discussHost ]);
   }
 
   function flagActions(row, host, ctx, fl) {

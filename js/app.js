@@ -11,10 +11,10 @@
   var motion = HVUI.initMotion();
 
   var VIEWS = {
-    home: HVViews.home, events: HVEventsView, teams: HVTeamsView, members: HVViews.members,
-    roles: HVViews.roles, audit: HVViews.audit, profile: HVViews.profile
+    home: HVViews.home, events: HVEventsView, teams: HVTeamsView, flags: HVFlagsView,
+    members: HVViews.members, roles: HVViews.roles, audit: HVViews.audit, profile: HVViews.profile
   };
-  var LABEL = { home: 'Home', events: 'Events', teams: 'Teams', members: 'Members', roles: 'Roles', audit: 'Activity', profile: 'Profile' };
+  var LABEL = { home: 'Home', events: 'Events', teams: 'Teams', flags: 'Flags', members: 'Members', roles: 'Roles', audit: 'Activity', profile: 'Profile' };
 
   var app = HVUI.$('#app');
   var gate = HVUI.$('#gate');
@@ -152,18 +152,74 @@
       var r = motion.toggle(); motionBtn.textContent = 'MOTION: ' + (r ? 'OFF' : 'ON');
     }}, 'MOTION: ' + (motion.reduced() ? 'OFF' : 'ON'));
 
+    var bell = el('button', { class: 'btn ghost small', title: 'Notifications', style: 'position:relative',
+      onclick: function () { notifPanel(); } }, '🔔');
+    var bellBadge = el('span', { id: 'bellBadge', class: 'hidden',
+      style: 'position:absolute;top:-6px;right:-6px;background:var(--pink);color:#fff;border:2px solid var(--line);font-family:var(--pixel);font-size:7px;padding:2px 4px;min-width:14px;text-align:center' });
+    bell.appendChild(bellBadge);
+
     var header = el('header', { class: 'nav' }, el('div', { class: 'container nav-inner' }, [
       el('div', { class: 'brand' }, [ el('span', { class: 'dot' }), document.createTextNode('#HASH'),
         el('small', { text: 'OS' }) ]),
-      el('div', { class: 'nav-right' }, [ navPills, who, motionBtn,
+      el('div', { class: 'nav-right' }, [ navPills, bell, who, motionBtn,
         el('button', { class: 'btn ghost small', title: 'Sign out',
           onclick: function () { HVAuth.signOut().then(function () { showGate(); location.hash = ''; }); } }, 'Sign out') ])
     ]));
+
+    refreshBell();
 
     var main = el('main', { class: 'app' }, el('div', { class: 'container', id: 'viewHost' }, []));
 
     app.appendChild(header);
     app.appendChild(main);
+  }
+
+  function refreshBell() {
+    HVApi.hv('notify.unreadCount', {}).then(function (r) {
+      var b = HVUI.$('#bellBadge');
+      if (!b) return;
+      var n = (r && r.ok) ? r.count : 0;
+      if (n > 0) { b.textContent = n > 99 ? '99+' : String(n); b.classList.remove('hidden'); }
+      else b.classList.add('hidden');
+    });
+  }
+
+  function notifPanel() {
+    var body = el('div', {}, HVUI.loading('Loading…'));
+    HVUI.modal({
+      title: 'Notifications', body: body,
+      foot: HVUI.footer([
+        { label: 'Mark all read', class: 'ghost', closes: false, onClick: function () {
+          HVApi.hv('notify.markAllRead', {}).then(function () { refreshBell(); HVUI.closeModal(); }); } },
+        { label: 'Close', class: 'primary' }
+      ])
+    });
+    HVApi.hv('notify.list', {}).then(function (r) {
+      body.innerHTML = '';
+      if (!r || !r.ok || !r.notifications.length) { body.appendChild(HVUI.empty('No notifications.')); return; }
+      var list = el('div', { class: 'stack' });
+      r.notifications.forEach(function (n) {
+        var row = el('div', { class: 'banner' + (n.read ? '' : ' info'), style: 'cursor:pointer',
+          onclick: function () {
+            HVApi.hv('notify.markRead', { id: n.id }).then(function () { refreshBell(); });
+            routeNotif(n); HVUI.closeModal();
+          } }, [
+          el('div', { style: 'font-weight:600', text: n.title }),
+          n.body ? el('div', { class: 'small', text: n.body }) : null,
+          el('div', { class: 'muted small', text: HVUI.timeAgo(n.created) })
+        ]);
+        list.appendChild(row);
+      });
+      body.appendChild(list);
+    });
+  }
+
+  /* route a notification's "type:id" link to the right view */
+  function routeNotif(n) {
+    if (!n.link) return;
+    if (n.link.indexOf('flag:') === 0) location.hash = '#/flags';
+    else if (n.link.indexOf('team:') === 0) location.hash = '#/teams';
+    else if (n.link.indexOf('event:') === 0) location.hash = '#/events';
   }
 
   function highlightNav(id) {

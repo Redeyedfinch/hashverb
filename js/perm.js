@@ -68,10 +68,9 @@ var HVPerm = (function () {
       { key: 'tasks.manage', label: 'Manage ANY task', desc: 'Org-wide: edit/assign/archive tasks in every team & event. Normally task authority comes from being a team/event member or manager.' }
     ]},
     { group: 'Communication', keys: [
-      { key: 'flags.create',        label: 'Raise flags on other teams' },
-      { key: 'flags.respond',       label: 'Respond to flags' },
+      { key: 'flags.manage',        label: 'Manage ANY flag', desc: 'Org-wide: drive any flag through its lifecycle. Normally flag authority comes from being on the team/event involved.' },
       { key: 'comments.create',     label: 'Comment & @mention' },
-      { key: 'announcements.post',  label: 'Post announcements' }
+      { key: 'announcements.post',  label: 'Post announcements', desc: 'Heads & secretaries.' }
     ]},
     { group: 'Files', keys: [
       { key: 'files.upload',  label: 'Upload files' },
@@ -107,6 +106,7 @@ var HVPerm = (function () {
     { id: 'home',    label: 'Home',    gate: null },
     { id: 'events',  label: 'Events',  gate: null },   /* directory is open to any signed-in member */
     { id: 'teams',   label: 'Teams',   gate: null },   /* directory is open to any signed-in member */
+    { id: 'flags',   label: 'Flags',   gate: null },   /* everyone sees flags relevant to them */
     { id: 'members', label: 'Members', gate: ['members.view', 'roles.manage'] },
     { id: 'roles',   label: 'Roles',   gate: ['roles.manage'] },
     { id: 'audit',   label: 'Activity', gate: ['roles.manage'] },

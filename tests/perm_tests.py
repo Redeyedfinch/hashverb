@@ -60,29 +60,30 @@ t('hasAny: true if the user holds any one of the keys', function () {
 /* ----- nav gating: the exact screens each role sees ----- */
 
 t('nav: an admin (star) sees every nav item', function () {
-  arrEq(HVPerm.navFor(['*']), ['home', 'events', 'teams', 'members', 'roles', 'audit', 'profile']);
+  arrEq(HVPerm.navFor(['*']), ['home', 'events', 'teams', 'flags', 'members', 'roles', 'audit', 'profile']);
 });
 
-t('nav: a plain member sees home, events, teams and profile', function () {
-  arrEq(HVPerm.navFor(['tasks.view', 'files.upload']), ['home', 'events', 'teams', 'profile']);
+t('nav: a plain member sees home, events, teams, flags and profile', function () {
+  arrEq(HVPerm.navFor(['tasks.view', 'files.upload']), ['home', 'events', 'teams', 'flags', 'profile']);
 });
 
-t('nav: events + teams are open to everyone (directories are not gated)', function () {
-  arrEq(HVPerm.navFor([]), ['home', 'events', 'teams', 'profile']);
+t('nav: open directories (events, teams, flags) show for everyone', function () {
+  arrEq(HVPerm.navFor([]), ['home', 'events', 'teams', 'flags', 'profile']);
 });
 
 t('nav: members.view alone opens Members but NOT Roles or Activity', function () {
-  arrEq(HVPerm.navFor(['members.view']), ['home', 'events', 'teams', 'members', 'profile']);
+  arrEq(HVPerm.navFor(['members.view']), ['home', 'events', 'teams', 'flags', 'members', 'profile']);
 });
 
 t('nav: roles.manage opens Members, Roles and Activity', function () {
-  arrEq(HVPerm.navFor(['roles.manage']), ['home', 'events', 'teams', 'members', 'roles', 'audit', 'profile']);
+  arrEq(HVPerm.navFor(['roles.manage']), ['home', 'events', 'teams', 'flags', 'members', 'roles', 'audit', 'profile']);
 });
 
-t('canSeeView: gate matches navFor, and home/events/teams/profile are always visible', function () {
+t('canSeeView: gate matches navFor, and home/events/teams/flags/profile are always visible', function () {
   ok(HVPerm.canSeeView([], 'home'));
   ok(HVPerm.canSeeView([], 'events'));
   ok(HVPerm.canSeeView([], 'teams'));
+  ok(HVPerm.canSeeView([], 'flags'));
   ok(HVPerm.canSeeView([], 'profile'));
   ok(!HVPerm.canSeeView([], 'members'));
   ok(!HVPerm.canSeeView(['members.view'], 'roles'));

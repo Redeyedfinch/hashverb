@@ -142,6 +142,13 @@ var HVEventsView = (function () {
       filesCard.appendChild(filesHost);
       host.appendChild(filesCard);
       HVFilesBoard.render(filesHost, 'event', ev.id);
+
+      /* budget for this event */
+      var budgetCard = el('div', { class: 'card' }, [ el('h3', { text: 'Budget' }) ]);
+      var budgetHost = el('div', { style: 'margin-top:10px' });
+      budgetCard.appendChild(budgetHost);
+      host.appendChild(budgetCard);
+      HVBudgetBoard.render(budgetHost, 'event', ev.id);
     });
     function back() { state.openId = null; view.render(host, ctx); }
   }

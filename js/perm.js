@@ -76,9 +76,7 @@ var HVPerm = (function () {
       { key: 'files.approve', label: 'Approve ANY file', desc: 'Org-wide file approver. Normally files are approved by the team/event manager. Uploading is open to members.' }
     ]},
     { group: 'Finance', keys: [
-      { key: 'budgets.view',    label: 'View budgets' },
-      { key: 'budgets.request', label: 'Request money' },
-      { key: 'budgets.approve', label: 'Approve budgets' }
+      { key: 'budgets.approve', label: 'Approve ANY budget', desc: 'Org-wide finance approver. Normally budgets are approved by the team/event manager; requesting is open to members.' }
     ]},
     { group: 'People ops', keys: [
       { key: 'progress.submit',  label: 'Submit weekly check-ins' },

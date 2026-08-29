@@ -65,9 +65,7 @@ var HVPerm = (function () {
       { key: 'events.archive',        label: 'Archive an event' }
     ]},
     { group: 'Work', keys: [
-      { key: 'tasks.view',     label: 'View tasks' },
-      { key: 'tasks.assign',   label: 'Create & assign tasks' },
-      { key: 'tasks.complete', label: 'Complete own tasks' }
+      { key: 'tasks.manage', label: 'Manage ANY task', desc: 'Org-wide: edit/assign/archive tasks in every team & event. Normally task authority comes from being a team/event member or manager.' }
     ]},
     { group: 'Communication', keys: [
       { key: 'flags.create',        label: 'Raise flags on other teams' },

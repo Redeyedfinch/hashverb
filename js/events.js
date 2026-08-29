@@ -128,6 +128,13 @@ var HVEventsView = (function () {
 
       /* teams */
       host.appendChild(teamsCard(host, ctx, ev, r.teams, caps));
+
+      /* tasks board for this event */
+      var tasksCard = el('div', { class: 'card' }, [ el('h3', { text: 'Tasks' }) ]);
+      var boardHost = el('div', { style: 'margin-top:10px' });
+      tasksCard.appendChild(boardHost);
+      host.appendChild(tasksCard);
+      HVTaskBoard.render(boardHost, 'event', ev.id);
     });
     function back() { state.openId = null; view.render(host, ctx); }
   }

@@ -147,6 +147,13 @@ var HVTeamsView = (function () {
       wrap.appendChild(tbl);
       roster.appendChild(wrap);
       host.appendChild(roster);
+
+      /* tasks board for this team */
+      var tasksCard = el('div', { class: 'card' }, [ el('h3', { text: 'Tasks' }) ]);
+      var boardHost = el('div', { style: 'margin-top:10px' });
+      tasksCard.appendChild(boardHost);
+      host.appendChild(tasksCard);
+      HVTaskBoard.render(boardHost, 'team', tm.id);
     });
 
     function back() { state.openId = null; view.render(host, ctx); }

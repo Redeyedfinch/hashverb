@@ -192,6 +192,13 @@ body.reduce-motion .spin { animation:none; }
 .empty { padding:26px; text-align:center; color:var(--ink-faint); font-family:var(--mono); font-size:18px; }
 .grp-title { font-family:var(--pixel); font-size:9px; margin:16px 0 6px; color:var(--ink-dim); }
 
+/* ---------------- task board ---------------- */
+.hv-board { display:flex; gap:12px; overflow-x:auto; padding-bottom:8px; }
+.hv-col { flex:0 0 220px; background:var(--bg); border:2px solid var(--line); box-shadow:var(--sh-sm); padding:8px; min-height:80px; }
+.hv-col-h { display:flex; justify-content:space-between; font-family:var(--pixel); font-size:8px; padding:4px 4px 8px; }
+.hv-task { background:var(--panel); border:2px solid var(--line); box-shadow:var(--sh-sm); padding:9px 10px; margin-bottom:8px; cursor:pointer; font-size:14px; }
+.hv-task:active { transform:translate(2px,2px); box-shadow:none; }
+
 /* view container */
 main.app { padding:22px 0 60px; }
 .view { display:none; }

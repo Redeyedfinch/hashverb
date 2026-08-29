@@ -44,12 +44,15 @@ var HVViews = (function () {
         grid
       ]));
 
-      /* a gentle note about what is and isn't built yet, so the org knows the
-         roadmap without leaving the app */
-      host.appendChild(el('div', { class: 'card banner info', style: 'margin-top:16px' }, [
-        el('strong', { text: 'Foundation is live.' }),
-        el('span', { text: ' Sign-in, roles and permissions are ready. Teams, events, tasks, flags, files and budgets arrive in the next phases.' })
-      ]));
+      /* my tasks */
+      var tasksCard = el('div', { class: 'card', style: 'margin-top:16px' }, [
+        el('div', { class: 'row' }, [ el('h2', { text: 'My tasks' }), el('span', { class: 'spacer' }),
+          el('button', { class: 'btn ghost small', onclick: function () { ctx.go('teams'); } }, 'Teams →') ])
+      ]);
+      var myTasksHost = el('div', { style: 'margin-top:10px' });
+      tasksCard.appendChild(myTasksHost);
+      host.appendChild(tasksCard);
+      HVTaskBoard.myTasks(myTasksHost);
 
       function link(icon, title, sub, id) {
         return el('button', {

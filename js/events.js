@@ -135,6 +135,13 @@ var HVEventsView = (function () {
       tasksCard.appendChild(boardHost);
       host.appendChild(tasksCard);
       HVTaskBoard.render(boardHost, 'event', ev.id);
+
+      /* files for this event */
+      var filesCard = el('div', { class: 'card' }, [ el('h3', { text: 'Files' }) ]);
+      var filesHost = el('div', { style: 'margin-top:10px' });
+      filesCard.appendChild(filesHost);
+      host.appendChild(filesCard);
+      HVFilesBoard.render(filesHost, 'event', ev.id);
     });
     function back() { state.openId = null; view.render(host, ctx); }
   }

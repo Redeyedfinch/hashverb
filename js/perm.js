@@ -73,8 +73,7 @@ var HVPerm = (function () {
       { key: 'announcements.post',  label: 'Post announcements', desc: 'Heads & secretaries.' }
     ]},
     { group: 'Files', keys: [
-      { key: 'files.upload',  label: 'Upload files' },
-      { key: 'files.approve', label: 'Approve / reject files' }
+      { key: 'files.approve', label: 'Approve ANY file', desc: 'Org-wide file approver. Normally files are approved by the team/event manager. Uploading is open to members.' }
     ]},
     { group: 'Finance', keys: [
       { key: 'budgets.view',    label: 'View budgets' },

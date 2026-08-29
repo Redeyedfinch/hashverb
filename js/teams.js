@@ -154,6 +154,13 @@ var HVTeamsView = (function () {
       tasksCard.appendChild(boardHost);
       host.appendChild(tasksCard);
       HVTaskBoard.render(boardHost, 'team', tm.id);
+
+      /* files for this team */
+      var filesCard = el('div', { class: 'card' }, [ el('h3', { text: 'Files' }) ]);
+      var filesHost = el('div', { style: 'margin-top:10px' });
+      filesCard.appendChild(filesHost);
+      host.appendChild(filesCard);
+      HVFilesBoard.render(filesHost, 'team', tm.id);
     });
 
     function back() { state.openId = null; view.render(host, ctx); }

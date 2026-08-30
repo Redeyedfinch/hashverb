@@ -24,13 +24,13 @@ var HV_CONFIG = {
 
   /* Paste your OAuth Web client ID here. Until you do, the app shows a
      friendly "not configured yet" screen instead of a broken Google button. */
-  OAUTH_CLIENT_ID: 'PASTE-YOUR-OAUTH-CLIENT-ID.apps.googleusercontent.com',
+  OAUTH_CLIENT_ID: '125946032270-5nr8e85f6d73k6p8uuchkdo00f2gb2la.apps.googleusercontent.com',
 
   /* The Hashverb OS Apps Script web app — its OWN project, independent of the
      games. Paste its /exec URL here after you create and deploy it (see
      apps/os/README in the backend repo). The hv.* API is reached by POSTing
      to this URL. It is NOT the games' /exec. */
-  EXEC_URL: 'PASTE-YOUR-HASHVERB-OS-EXEC-URL-ENDING-IN/exec',
+  EXEC_URL: 'https://script.google.com/macros/s/AKfycbyKlt7GF-pTdhu92BONMEQLV0uJiTcJmBEEk-H91pDBM4i1nCzzDhCo8PmA2CwN6Ef-/exec',
 
   /* Session token lives here (first-party origin → survives reloads, including
      on iOS, unlike anything inside the Apps Script iframe). */

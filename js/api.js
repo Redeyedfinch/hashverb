@@ -53,7 +53,14 @@ var HVApi = (function () {
         /* a stale/void session: clear it so the app drops back to sign-in */
         if (data && data.ok === false && data.auth) {
           setToken('');
+          reset();
           if (typeof HVApi.onAuthLost === 'function') HVApi.onAuthLost();
+        }
+        /* A successful WRITE invalidates cached reads in its namespace, so the
+           next paint of that area is correct without manual bookkeeping. */
+        if (data && data.ok && !isRead(fn)) {
+          var dot = fn.indexOf('.');
+          bust(dot > 0 ? fn.substring(0, dot + 1) : fn);
         }
         return data;
       });
@@ -62,6 +69,69 @@ var HVApi = (function () {
     });
   }
 
+  /* ------------------------------------------------------------------ *
+   * Perceived-speed layer. Apps Script round-trips are 0.5-2s each, so:
+   *   - COALESCE: identical reads in flight at once share ONE request.
+   *   - CACHE + SWR: load() paints cached data instantly, then revalidates
+   *     in the background - so returning to a screen is immediate.
+   *   - PATCH / BUST: mutations update or drop cached reads so the next
+   *     paint is correct without a mandatory refetch.
+   * Only read-shaped calls are cached; mutations always hit the network.
+   * ------------------------------------------------------------------ */
+  var cache = {};      // key -> last good result
+  var inflight = {};   // key -> Promise (coalescing)
+
+  var READ_RX = /\.(list|get|profile|meta|types|stages|statuses|domains|myTeams|myEvents|myTasks|unreadCount|homeTiles|summary|thread|card)$|^(dashboard|announce|notify|audit|users|roles)\./;
+  function isRead(fn) { return READ_RX.test(fn); }
+
+  function keyOf(fn, args) {
+    var a = {};
+    for (var k in (args || {})) if (k !== 'token') a[k] = args[k];
+    return fn + '|' + JSON.stringify(a);
+  }
+
+  function fetchCoalesced(fn, args) {
+    var key = keyOf(fn, args);
+    if (inflight[key]) return inflight[key];
+    var p = hv(fn, args).then(function (r) { delete inflight[key]; return r; },
+                              function (e) { delete inflight[key]; throw e; });
+    inflight[key] = p;
+    return p;
+  }
+
+  /**
+   * Stale-while-revalidate read. Calls render(result, isCached) with cached
+   * data immediately when available, then again with fresh data. The render
+   * callback must be idempotent (clear then rebuild) - the app's views are.
+   * Returns the fresh-data promise.
+   */
+  function load(fn, args, render) {
+    var key = keyOf(fn, args);
+    if (render && cache.hasOwnProperty(key)) { try { render(cache[key], true); } catch (e) {} }
+    return fetchCoalesced(fn, args).then(function (r) {
+      if (r && r.ok) cache[key] = r;         // never cache an error
+      else if (r && r.auth) delete cache[key];
+      if (render) { try { render(r, false); } catch (e) {} }
+      return r;
+    });
+  }
+
+  /* Drop cached reads whose key contains `sub` (e.g. 'teams.list'); no arg
+     clears everything. Call after a mutation that changed that data. */
+  function bust(sub) {
+    for (var k in cache) if (!sub || k.indexOf(sub) >= 0) delete cache[k];
+  }
+
+  /* Optimistically mutate a cached read in place (updater(result)) so the very
+     next paint reflects a change before the server confirms it. */
+  function patch(fn, args, updater) {
+    var key = keyOf(fn, args);
+    if (cache.hasOwnProperty(key)) { try { updater(cache[key]); } catch (e) {} }
+  }
+
+  /* Clear all caches (e.g. on sign-out). */
+  function reset() { cache = {}; inflight = {}; }
+
   /* Convenience: first-line error text from a result, for toasts. */
   function err(res, fallback) {
     if (res && res.errors && res.errors.length) return res.errors[0];
@@ -69,7 +139,8 @@ var HVApi = (function () {
   }
 
   return {
-    hv: hv, token: token, setToken: setToken, signedIn: signedIn, err: err,
+    hv: hv, load: load, bust: bust, patch: patch, reset: reset,
+    token: token, setToken: setToken, signedIn: signedIn, err: err,
     onAuthLost: null
   };
 })();

@@ -93,9 +93,8 @@ var HVViews = (function () {
      ==================================================================== */
   function renderQuestCard(host) {
     host.appendChild(HVUI.loading('Loading your quest…'));
-    HVApi.hv('quest.profile', {}).then(function (p) {
-      host.innerHTML = '';
-      if (!p || !p.ok) return;   /* the quest card is a bonus - fail quiet */
+    HVApi.load('quest.profile', {}, function (p) {
+      if (!p || !p.ok) { if (!p || !p.auth) host.innerHTML = ''; return; }   /* the quest card is a bonus - fail quiet */
       paint(p);
     });
 
@@ -108,11 +107,16 @@ var HVViews = (function () {
         btn = el('button', { class: 'btn ghost', disabled: 'disabled' }, 'Checked in today');
       } else {
         btn = el('button', { class: 'btn primary', onclick: function () {
-          btn.disabled = true;
+          /* optimistic: reflect the check-in instantly, reconcile with the server */
+          var optimistic = { xp: p.xp + p.checkinXp, level: p.level, xpInto: p.xpInto + p.checkinXp,
+            xpForLevel: p.xpForLevel, streak: p.streak + 1, checkedInToday: true, dailyXp: p.dailyXp + p.checkinXp,
+            tasksDone: p.tasksDone, taskXp: p.taskXp, weeklyCheckins: p.weeklyCheckins, weeklyXp: p.weeklyXp, checkinXp: p.checkinXp };
+          if (optimistic.xpInto >= optimistic.xpForLevel) { optimistic.level += 1; optimistic.xpInto -= optimistic.xpForLevel; }
+          paint(optimistic);
           HVApi.hv('quest.checkin', {}).then(function (r) {
-            if (r && r.ok) { toast('+' + r.gained + ' XP — streak ' + r.streak);
-              HVApi.hv('quest.profile', {}).then(function (fresh) { if (fresh && fresh.ok) paint(fresh); }); }
-            else { btn.disabled = false; toast(HVApi.err(r, 'Could not check in.'), true); }
+            if (r && r.ok) { toast('+' + r.gained + ' XP - streak ' + r.streak);
+              HVApi.load('quest.profile', {}, function (fresh) { if (fresh && fresh.ok) paint(fresh); }); }
+            else { toast(HVApi.err(r, 'Could not check in.'), true); paint(p); }   /* revert */
           });
         } }, 'Daily check-in  +10 XP');
       }

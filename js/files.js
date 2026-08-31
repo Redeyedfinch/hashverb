@@ -8,16 +8,19 @@ var HVFilesBoard = (function () {
   var STATE_COLOR = { draft: '#6d6675', submitted: '#F4A400', review: '#0FA6AE', changes: '#E11D48', approved: '#0f9d58', published: '#00b874' };
   var metaCache = null;
 
+  var MAX_UPLOAD = 10 * 1024 * 1024;   /* ~10 MB; bigger files use a link */
+
   function render(host, parentType, parentId) {
     host.innerHTML = '';
     ensureMeta().then(function () {
-      HVApi.hv('files.list', { parentType: parentType, parentId: parentId }).then(function (r) {
+      HVApi.load('files.list', { parentType: parentType, parentId: parentId }, function (r) {
         host.innerHTML = '';
         if (!r || !r.ok) { host.appendChild(HVUI.empty(HVApi.err(r, 'Could not load files.'))); return; }
         host.appendChild(el('div', { class: 'row', style: 'margin-bottom:10px' }, [
           el('div', { class: 'muted small', text: r.files.length + (r.files.length === 1 ? ' file' : ' files') }),
           el('span', { class: 'spacer' }),
-          r.canAdd ? el('button', { class: 'btn primary small', onclick: function () { fileModal(host, parentType, parentId, null, r); } }, '+ File') : null
+          r.canAdd ? el('button', { class: 'btn primary small', onclick: function () { uploadModal(host, parentType, parentId, null); } }, 'Upload file') : null,
+          r.canAdd ? el('button', { class: 'btn ghost small', onclick: function () { addModal(host, parentType, parentId); } }, 'Add link') : null
         ]));
         if (!r.files.length) { host.appendChild(el('div', { class: 'muted small', text: 'No files yet.' })); return; }
         var list = el('div', { class: 'stack' });
@@ -49,7 +52,7 @@ var HVFilesBoard = (function () {
     if (!fl) { addModal(host, parentType, parentId); return; }
     var body = el('div', {}, HVUI.loading('Loading…'));
     HVUI.modal({ title: fl.name, body: body });
-    HVApi.hv('files.get', { fileId: fl.id }).then(function (r) {
+    HVApi.load('files.get', { fileId: fl.id }, function (r) {
       body.innerHTML = '';
       if (!r || !r.ok) { body.appendChild(HVUI.empty(HVApi.err(r))); return; }
       var file = r.file, canManage = r.canManage;
@@ -74,16 +77,34 @@ var HVFilesBoard = (function () {
       });
       body.appendChild(vlist);
 
-      /* add version */
-      var vurl = el('input', { placeholder: 'new version link' });
-      var vnote = el('input', { placeholder: 'note (optional)' });
-      body.appendChild(el('div', { class: 'field' }, [ el('label', { text: 'Upload a new version' }), vurl, vnote,
-        el('button', { class: 'btn primary small', style: 'margin-top:6px', onclick: function () {
-          if (!vurl.value.trim()) { toast('Paste a link.', true); return; }
-          HVApi.hv('files.addVersion', { fileId: fl.id, url: vurl.value.trim(), note: vnote.value.trim() }).then(function (rr) {
-            if (rr && rr.ok) { HVUI.closeModal(); toast('Version added.'); render(host, parentType, parentId); } else toast(HVApi.err(rr), true);
-          });
-        } }, 'Add version') ]));
+      /* new version — upload a file, or add a link */
+      if (canManage || r.file) {
+        var vfile = el('input', { type: 'file' });
+        var vnote2 = el('input', { placeholder: 'note (optional)' });
+        var vstatus = el('div', { class: 'muted small' });
+        var vupBtn = el('button', { class: 'btn primary small', style: 'margin-top:6px', onclick: function () {
+          var f = vfile.files && vfile.files[0];
+          if (!f) { toast('Choose a file.', true); return; }
+          if (f.size > MAX_UPLOAD) { toast('That file is over ~10 MB — add it as a link instead.', true); return; }
+          vupBtn.disabled = true; vstatus.textContent = 'Uploading…';
+          readAsBase64(f).then(function (b) {
+            HVApi.hv('files.upload', { fileId: fl.id, fileName: b.name, mimeType: b.mime, dataBase64: b.data, note: vnote2.value.trim() }).then(function (rr) {
+              if (rr && rr.ok) { HVUI.closeModal(); toast('New version uploaded.'); render(host, parentType, parentId); }
+              else { vupBtn.disabled = false; vstatus.textContent = ''; toast(HVApi.err(rr), true); }
+            });
+          }, function () { vupBtn.disabled = false; vstatus.textContent = ''; toast('Could not read that file.', true); });
+        } }, 'Upload new version');
+        body.appendChild(el('div', { class: 'field' }, [ el('label', { text: 'Upload a new version' }), vfile, vnote2, vupBtn, vstatus ]));
+
+        var vurl = el('input', { placeholder: 'or paste a new version link' });
+        body.appendChild(el('div', { class: 'field' }, [ vurl,
+          el('button', { class: 'btn ghost small', style: 'margin-top:6px', onclick: function () {
+            if (!vurl.value.trim()) { toast('Paste a link.', true); return; }
+            HVApi.hv('files.addVersion', { fileId: fl.id, url: vurl.value.trim(), note: vnote2.value.trim() }).then(function (rr) {
+              if (rr && rr.ok) { HVUI.closeModal(); toast('Version added.'); render(host, parentType, parentId); } else toast(HVApi.err(rr), true);
+            });
+          } }, 'Add version link') ]));
+      }
 
       /* approval controls */
       var stateRow = el('div', { class: 'row wrap', style: 'gap:6px;margin-top:10px' });
@@ -123,6 +144,51 @@ var HVFilesBoard = (function () {
         if (r && r.ok) { HVUI.closeModal(); toast('File added.'); render(host, parentType, parentId); } else toast(HVApi.err(r), true);
       });
     } } ]) });
+  }
+
+  /* Upload a new file (real bytes -> Drive, via the backend). */
+  function uploadModal(host, parentType, parentId) {
+    var fileInput = el('input', { type: 'file' });
+    var name = el('input', { placeholder: 'File name (defaults to the file’s name)' });
+    var cat = el('select', { style: 'width:100%;padding:10px;border:2px solid var(--line)' },
+      (metaCache.categories || []).map(function (c) { var o = document.createElement('option'); o.value = c; o.textContent = c; return o; }));
+    var note = el('input', { placeholder: 'note (optional)' });
+    var status = el('div', { class: 'muted small' });
+
+    HVUI.modal({ title: 'Upload a file', body: el('div', {}, [
+      el('p', { class: 'muted small', text: 'Posters, images and PDFs up to about 10 MB. The file is stored in Drive and tracked here with versions and approval. For a big file or video, use “Add link” instead.' }),
+      el('div', { class: 'field' }, [ el('label', { text: 'File' }), fileInput ]),
+      el('div', { class: 'field' }, [ el('label', { text: 'Name' }), name ]),
+      el('div', { class: 'field' }, [ el('label', { text: 'Category' }), cat ]),
+      el('div', { class: 'field' }, [ el('label', { text: 'Note' }), note ]),
+      status
+    ]), foot: HVUI.footer([ { label: 'Cancel', class: 'ghost' }, { label: 'Upload', class: 'primary', closes: false, onClick: function () {
+      var f = fileInput.files && fileInput.files[0];
+      if (!f) { toast('Choose a file to upload.', true); return; }
+      if (f.size > MAX_UPLOAD) { toast('That file is over ~10 MB. Use “Add link” for large files or videos.', true); return; }
+      status.textContent = 'Uploading… this can take a few seconds.';
+      readAsBase64(f).then(function (b) {
+        HVApi.hv('files.upload', { parentType: parentType, parentId: parentId,
+          name: (name.value.trim() || b.name), category: cat.value, note: note.value.trim(),
+          fileName: b.name, mimeType: b.mime, dataBase64: b.data }).then(function (r) {
+          if (r && r.ok) { HVUI.closeModal(); toast('Uploaded.'); render(host, parentType, parentId); }
+          else { status.textContent = ''; toast(HVApi.err(r, 'Upload failed.'), true); }
+        });
+      }, function () { status.textContent = ''; toast('Could not read that file.', true); });
+    } } ]) });
+  }
+
+  /* Read a File as base64 (strips the data: URL prefix). */
+  function readAsBase64(file) {
+    return new Promise(function (res, rej) {
+      var fr = new FileReader();
+      fr.onload = function () {
+        var s = String(fr.result || ''); var comma = s.indexOf(',');
+        res({ data: comma >= 0 ? s.substring(comma + 1) : s, name: file.name, mime: file.type || 'application/octet-stream' });
+      };
+      fr.onerror = function () { rej(new Error('read failed')); };
+      fr.readAsDataURL(file);
+    });
   }
 
   function metaLabel(key) {

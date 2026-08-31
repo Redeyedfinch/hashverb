@@ -43,7 +43,7 @@ var HVEventsView = (function () {
     var listHost = el('div', {});
     host.appendChild(listHost);
     listHost.appendChild(HVUI.loading('Loading events…'));
-    HVApi.hv('events.list', {}).then(function (r) {
+    HVApi.load('events.list', {}, function (r) {
       listHost.innerHTML = '';
       if (!r || !r.ok) { listHost.appendChild(HVUI.empty(HVApi.err(r, 'Could not load events.'))); return; }
       if (!r.events.length) { listHost.appendChild(HVUI.empty(canCreate ? 'No events yet — create the first one.' : 'No events yet.')); return; }
@@ -84,7 +84,7 @@ var HVEventsView = (function () {
   function renderDetail(host, ctx, eventId) {
     host.innerHTML = '';
     host.appendChild(HVUI.loading('Loading event…'));
-    HVApi.hv('events.get', { eventId: eventId }).then(function (r) {
+    HVApi.load('events.get', { eventId: eventId }, function (r) {
       host.innerHTML = '';
       if (!r || !r.ok) {
         host.appendChild(el('button', { class: 'btn ghost small', onclick: back }, '← Events'));

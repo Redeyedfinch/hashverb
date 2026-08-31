@@ -21,7 +21,7 @@ var HVTaskBoard = (function () {
   function render(host, parentType, parentId) {
     host.innerHTML = '';
     host.appendChild(HVUI.loading('Loading tasks…'));
-    HVApi.hv('tasks.list', { parentType: parentType, parentId: parentId }).then(function (r) {
+    HVApi.load('tasks.list', { parentType: parentType, parentId: parentId }, function (r) {
       host.innerHTML = '';
       if (!r || !r.ok) { host.appendChild(HVUI.empty(HVApi.err(r, 'Could not load tasks.'))); return; }
       var head = el('div', { class: 'row', style: 'margin-bottom:10px' }, [
@@ -208,7 +208,7 @@ var HVTaskBoard = (function () {
   function myTasks(host) {
     host.innerHTML = '';
     host.appendChild(HVUI.loading('Loading your tasks…'));
-    HVApi.hv('tasks.myTasks', {}).then(function (r) {
+    HVApi.load('tasks.myTasks', {}, function (r) {
       host.innerHTML = '';
       if (!r || !r.ok) { host.appendChild(HVUI.empty(HVApi.err(r, 'Could not load your tasks.'))); return; }
       if (!r.tasks.length) { host.appendChild(HVUI.empty('No open tasks assigned to you.')); return; }

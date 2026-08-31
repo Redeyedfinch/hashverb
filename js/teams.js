@@ -61,7 +61,7 @@ var HVTeamsView = (function () {
     host.appendChild(listHost);
     listHost.appendChild(HVUI.loading('Loading teams…'));
 
-    HVApi.hv('teams.list', {}).then(function (r) {
+    HVApi.load('teams.list', {}, function (r) {
       listHost.innerHTML = '';
       if (!r || !r.ok) { listHost.appendChild(HVUI.empty(HVApi.err(r, 'Could not load teams.'))); return; }
       if (!r.teams.length) {
@@ -95,7 +95,7 @@ var HVTeamsView = (function () {
   function renderDetail(host, ctx, teamId) {
     host.innerHTML = '';
     host.appendChild(HVUI.loading('Loading team…'));
-    HVApi.hv('teams.get', { teamId: teamId }).then(function (r) {
+    HVApi.load('teams.get', { teamId: teamId }, function (r) {
       host.innerHTML = '';
       if (!r || !r.ok) {
         host.appendChild(el('button', { class: 'btn ghost small', onclick: back }, '← Teams'));

@@ -67,7 +67,7 @@ var HVAnnounce = (function () {
     var listHost = el('div', { style: 'margin-top:10px' });
     host.appendChild(listHost);
     listHost.appendChild(HVUI.loading('Loading…'));
-    HVApi.hv('announcements.list', {}).then(function (r) {
+    HVApi.load('announcements.list', {}, function (r) {
       listHost.innerHTML = '';
       if (!r || !r.ok) { listHost.appendChild(HVUI.empty(HVApi.err(r, 'Could not load announcements.'))); return; }
       if (!r.announcements.length) { listHost.appendChild(el('div', { class: 'muted small', text: 'No announcements.' })); return; }

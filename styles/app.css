@@ -239,3 +239,49 @@ main.app { padding:22px 0 60px; }
 @media (hover:none) {
   .btn:active { transform:translate(3px,3px); }
 }
+
+/* ---------------- Shroomy the mascot (ported from the club site) ---------------- */
+.mascot { position:fixed; left:0; top:0; z-index:60; width:76px; height:92px; cursor:pointer; pointer-events:auto; transform:translate3d(0,0,0); will-change:transform; }
+.mascot .m-inner { width:100%; height:100%; transform-origin:50% 92%; }
+.mascot .m-inner.breathe { animation:shroom-breathe 1.7s steps(2,end) infinite; }
+.mascot .m-flip { width:100%; height:100%; transform-origin:50% 92%; }
+.mascot .m-body { width:100%; height:100%; transform-origin:50% 92%; }
+.mascot .m-body.walk { animation:shroom-hop .30s steps(2,end) infinite; }
+.mascot svg { width:100%; height:100%; filter:drop-shadow(3px 3px 0 rgba(23,19,31,.26)); overflow:visible; display:block; }
+.mascot .v { display:none; }
+.mascot #eyes { transform-box:fill-box; transform-origin:center; }
+.mascot #eyes.blink { animation:shroom-blink .18s steps(3,end); }
+.mascot .pupil { transform-box:fill-box; transition:transform .05s linear; }
+.mascot.super-aura svg { filter:drop-shadow(0 0 7px var(--gold)) drop-shadow(0 0 13px var(--teal)); }
+.mascot.super-aura { animation:shroom-hue 2.4s steps(6,end) infinite; }
+.mascot.angry-tint .shroom-cap { fill:#a51f2b; }
+.mascot.angry-tint { filter:saturate(1.3) brightness(.92); }
+.mascot-bubble { position:absolute; bottom:88px; left:50%; transform:translateX(-50%); background:#fff; border:2px solid var(--ink); font-family:var(--mono); font-size:14px; padding:2px 9px; box-shadow:2px 2px 0 var(--line); white-space:nowrap; opacity:0; transition:opacity .16s; pointer-events:none; }
+.mascot-bubble.show { opacity:1; }
+.m-fx { position:absolute; pointer-events:none; font-size:16px; line-height:1; will-change:transform,opacity; z-index:1; left:44%; top:8px; }
+@keyframes shroom-breathe { 0%,100%{transform:scaleX(1) scaleY(1)} 50%{transform:scaleX(1.06) scaleY(.94)} }
+@keyframes shroom-hop { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+@keyframes shroom-blink { 0%,100%{transform:scaleY(1)} 45%,55%{transform:scaleY(.1)} }
+@keyframes shroom-hue { 0%{filter:hue-rotate(0)} 100%{filter:hue-rotate(40deg)} }
+.m-inner.fx-jump { animation:shroom-jump .7s steps(6,end); }
+.m-inner.fx-spin { animation:shroom-spin .85s steps(8,end); }
+.m-inner.fx-wobble { animation:shroom-wobble .8s steps(4,end); }
+.m-inner.fx-jitter { animation:shroom-jitter .16s steps(2,end) 7; }
+.m-inner.fx-shiver { animation:shroom-shiver .15s steps(2,end) 12; }
+.m-inner.fx-pop { animation:shroom-pop .5s steps(4,end); }
+.m-inner.fx-droop { animation:shroom-droop .7s steps(3,end) forwards; }
+.m-inner.fx-dance { animation:shroom-dance .55s steps(2,end) 3; }
+.m-inner.fx-sleepy { animation:shroom-sleepy 2s steps(2,end) infinite; }
+@keyframes shroom-jump { 0%{transform:translateY(0)} 30%{transform:translateY(-26px)} 55%{transform:translateY(0)} 72%{transform:translateY(-9px)} 100%{transform:translateY(0)} }
+@keyframes shroom-spin { 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
+@keyframes shroom-wobble { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-15deg)} 75%{transform:rotate(15deg)} }
+@keyframes shroom-jitter { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-3px)} 50%{transform:translateX(3px)} 75%{transform:translateX(-2px)} }
+@keyframes shroom-shiver { 0%,100%{transform:translate(0,0) scale(.82)} 25%{transform:translate(-2px,0) scale(.82)} 50%{transform:translate(2px,1px) scale(.82)} 75%{transform:translate(-1px,-1px) scale(.82)} }
+@keyframes shroom-pop { 0%{transform:scale(1)} 40%{transform:scale(1.35)} 70%{transform:scale(.9)} 100%{transform:scale(1)} }
+@keyframes shroom-droop { 0%{transform:translateY(0)} 100%{transform:translateY(5px) scaleY(.96)} }
+@keyframes shroom-dance { 0%,100%{transform:translateX(0) rotate(0)} 25%{transform:translateX(-8px) rotate(-9deg)} 75%{transform:translateX(8px) rotate(9deg)} }
+@keyframes shroom-sleepy { 0%,100%{transform:rotate(7deg)} 50%{transform:rotate(11deg)} }
+@keyframes m-rise { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-30px)} }
+@media (max-width:900px) { .mascot { width:64px; height:76px; } }
+@media (hover:none) { .mascot { pointer-events:none; } }
+body.reduce-motion .mascot .m-inner.breathe { animation:none; }

@@ -44,6 +44,15 @@ var HVUI = (function () {
     toastEl.classList.add('show');
     clearTimeout(toastT);
     toastT = setTimeout(function () { toastEl.classList.remove('show'); }, 3400);
+    /* Shroomy reacts to what happens: a happy hop on success, a puzzled look on
+       an error. Guarded - the mascot is optional and must never break a toast. */
+    try {
+      if (window.HVMascot) {
+        if (isErr) HVMascot.react('confused');
+        else if (/\+\s*\d+\s*xp/i.test(msg)) { HVMascot.react('happy'); HVMascot.xp(msg.replace(/\s*-\s*streak.*/i, '')); }
+        else HVMascot.react('happy');
+      }
+    } catch (e) {}
   }
 
   /* ---------------- modal ---------------- */

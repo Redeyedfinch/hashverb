@@ -171,7 +171,11 @@ var HVEventsView = (function () {
       if (i < stagesCache.length - 1) row.appendChild(el('span', { class: 'muted', text: '>' }));
     });
     wrap.appendChild(row);
-    if (!caps.moveStage) wrap.appendChild(el('div', { class: 'muted small', style: 'margin-top:6px', text: 'Only the event manager can move stages.' }));
+    /* what the current stage means, so moving through phases reads as progress */
+    var curMeta = null; (stagesCache || []).forEach(function (s) { if (s.key === ev.stage) curMeta = s; });
+    if (curMeta && curMeta.desc) wrap.appendChild(el('p', { class: 'section-sub', style: 'margin-top:8px', text: curMeta.desc }));
+    if (caps.moveStage) wrap.appendChild(el('div', { class: 'muted small', style: 'margin-top:4px', text: 'Tap a stage to move the event there — its organizers are notified.' }));
+    else wrap.appendChild(el('div', { class: 'muted small', style: 'margin-top:6px', text: 'Only the event manager can move stages.' }));
     return wrap;
   }
 

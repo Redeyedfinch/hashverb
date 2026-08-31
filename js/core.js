@@ -163,6 +163,21 @@ var HVUI = (function () {
   }
   function validId(raw) { return !!normId(raw); }
 
+  /* A RetroUI glyph tile: hard-bordered square with 1-2 initials in the
+     display font - the house replacement for pictogram icons on teams,
+     events and anything else that needs a visual handle. */
+  function tile(name, color, px) {
+    px = px || 34;
+    return el('div', {
+      class: 'glyph-tile',
+      style: 'width:' + px + 'px;height:' + px + 'px;border:2px solid var(--line);' +
+        'display:grid;place-items:center;font-family:var(--display);font-weight:700;' +
+        'font-size:' + Math.round(px * 0.42) + 'px;background:var(--bg);flex:0 0 auto;' +
+        (color ? 'color:' + color + ';border-bottom:4px solid ' + color + ';' : ''),
+      text: initials(name)
+    });
+  }
+
   /* Loading placeholder node. */
   function loading(label) {
     return el('div', { class: 'loading-wrap' }, [
@@ -175,7 +190,7 @@ var HVUI = (function () {
     $: $, $$: $$, el: el, esc: esc, toast: toast,
     modal: modal, closeModal: close, footer: footer, confirm: confirm,
     initMotion: initMotion, timeAgo: timeAgo, fmtDate: fmtDate, initials: initials,
-    normId: normId, validId: validId,
+    normId: normId, validId: validId, tile: tile,
     loading: loading, empty: empty
   };
 })();

@@ -50,9 +50,9 @@ var HVCheckins = (function () {
             el('span', { class: 'chip', style: m.submitted ? 'background:#e2f7ec' : '', text: m.submitted ? '✓' : 'missing' })
           ]),
           m.submitted ? el('div', { class: 'small', style: 'margin-top:4px' }, [
-            m.accomplished ? el('div', { text: '✓ ' + m.accomplished }) : null,
-            m.next ? el('div', { class: 'muted', text: '→ ' + m.next }) : null,
-            m.blockers ? el('div', { style: 'color:var(--danger)', text: '⛔ ' + m.blockers }) : null
+            m.accomplished ? el('div', {}, [ el('strong', { text: 'Did: ' }), document.createTextNode(m.accomplished) ]) : null,
+            m.next ? el('div', { class: 'muted' }, [ el('strong', { text: 'Next: ' }), document.createTextNode(m.next) ]) : null,
+            m.blockers ? el('div', { style: 'color:var(--danger)' }, [ el('strong', { text: 'Blocked: ' }), document.createTextNode(m.blockers) ]) : null
           ]) : null
         ]));
       });

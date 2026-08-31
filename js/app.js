@@ -154,7 +154,7 @@
     }}, 'MOTION: ' + (motion.reduced() ? 'OFF' : 'ON'));
 
     var bell = el('button', { class: 'btn ghost small', title: 'Notifications', style: 'position:relative',
-      onclick: function () { notifPanel(); } }, '🔔');
+      onclick: function () { notifPanel(); } }, 'Alerts');
     var bellBadge = el('span', { id: 'bellBadge', class: 'hidden',
       style: 'position:absolute;top:-6px;right:-6px;background:var(--pink);color:#fff;border:2px solid var(--line);font-family:var(--pixel);font-size:7px;padding:2px 4px;min-width:14px;text-align:center' });
     bell.appendChild(bellBadge);

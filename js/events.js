@@ -9,10 +9,6 @@
 var HVEventsView = (function () {
   var el = HVUI.el, esc = HVUI.esc, toast = HVUI.toast;
 
-  var TYPE_ICON = {
-    'Hackathon': '💻', 'Workshop': '🛠', 'Competition': '🏆', 'Exhibition': '🖼',
-    'Seminar': '🎓', 'Recruitment': '📣', 'Tech Fest': '🎉', 'Internal': '🔒', 'Other': '📅'
-  };
   var typesCache = null, stagesCache = null;
   var state = { openId: null };
 
@@ -60,7 +56,7 @@ var HVEventsView = (function () {
       return el('button', { class: 'tile', style: 'text-align:left;cursor:pointer;border-left:6px solid ' + esc(ev.color || 'var(--pink)'),
         onclick: function () { state.openId = ev.id; view.render(host, ctx); } }, [
         el('div', { class: 'row' }, [
-          el('div', { style: 'font-size:26px', text: ev.icon || TYPE_ICON[ev.type] || '📅' }),
+          HVUI.tile(ev.name, ev.color || 'var(--pink)', 34),
           el('span', { class: 'spacer' }),
           ev.myRank ? el('span', { class: 'chip role', text: rankLabel(ev.myRank) }) : null
         ]),
@@ -70,7 +66,7 @@ var HVEventsView = (function () {
           el('span', { class: 'chip', style: stagePillStyle(ev.stage), text: ev.stageLabel })
         ]),
         stageBar(ev),
-        ev.startDate ? el('div', { class: 'l', style: 'margin-top:8px', text: '📅 ' + ev.startDate + (ev.endDate ? ' → ' + ev.endDate : '') }) : null
+        ev.startDate ? el('div', { class: 'l', style: 'margin-top:8px;font-family:var(--mono);font-size:16px', text: ev.startDate + (ev.endDate ? ' -> ' + ev.endDate : '') }) : null
       ]);
     }
   }
@@ -104,12 +100,12 @@ var HVEventsView = (function () {
       if (caps.archive) headActions.appendChild(el('button', { class: 'btn danger small', onclick: function () { archive(host, ctx, ev); } }, 'Archive'));
       host.appendChild(el('div', { class: 'card', style: 'border-left:6px solid ' + esc(ev.color || 'var(--pink)') }, [
         el('div', { class: 'row wrap' }, [
-          el('div', { style: 'font-size:34px', text: ev.icon || TYPE_ICON[ev.type] || '📅' }),
+          HVUI.tile(ev.name, ev.color || 'var(--pink)', 46),
           el('div', {}, [
             el('h1', { class: 'section-title', style: 'margin:0', text: ev.name }),
             el('div', { class: 'row wrap', style: 'gap:6px;margin-top:4px' }, [
               ev.type ? el('span', { class: 'chip', text: ev.type }) : null,
-              ev.startDate ? el('span', { class: 'muted small', text: '📅 ' + ev.startDate + (ev.endDate ? ' → ' + ev.endDate : '') }) : null
+              ev.startDate ? el('span', { class: 'muted small', style: 'font-family:var(--mono);font-size:16px', text: ev.startDate + (ev.endDate ? ' -> ' + ev.endDate : '') }) : null
             ])
           ]),
           el('span', { class: 'spacer' }), headActions
@@ -170,9 +166,9 @@ var HVEventsView = (function () {
         class: 'chip', style: 'cursor:' + (caps.moveStage ? 'pointer' : 'default') + ';' +
           (isCur ? 'background:var(--ink);color:#fff' : done ? 'background:#e2f7ec' : 'background:var(--bg)'),
         onclick: caps.moveStage ? function () { moveStage(host, ctx, ev, s.key); } : null
-      }, (done ? '✓ ' : '') + s.label);
+      }, (done ? '[x] ' : '') + s.label);
       row.appendChild(pill);
-      if (i < stagesCache.length - 1) row.appendChild(el('span', { class: 'muted', text: '→' }));
+      if (i < stagesCache.length - 1) row.appendChild(el('span', { class: 'muted', text: '>' }));
     });
     wrap.appendChild(row);
     if (!caps.moveStage) wrap.appendChild(el('div', { class: 'muted small', style: 'margin-top:6px', text: 'Only the event manager can move stages.' }));
@@ -251,8 +247,8 @@ var HVEventsView = (function () {
     if (!teams.length) { wrap.appendChild(HVUI.empty('No teams linked yet.')); return wrap; }
     var row = el('div', { class: 'row wrap', style: 'gap:8px;margin-top:10px' });
     teams.forEach(function (tm) {
-      var chip = el('span', { class: 'chip role' }, [ document.createTextNode((tm.icon ? tm.icon + ' ' : '') + tm.name) ]);
-      if (caps.edit) chip.appendChild(el('span', { class: 'x', title: 'Unlink', onclick: function () { unlinkTeam(host, ctx, ev, tm); } }, '✕'));
+      var chip = el('span', { class: 'chip role' }, [ document.createTextNode(tm.name) ]);
+      if (caps.edit) chip.appendChild(el('span', { class: 'x', title: 'Unlink', onclick: function () { unlinkTeam(host, ctx, ev, tm); } }, 'x'));
       row.appendChild(chip);
     });
     wrap.appendChild(row);
@@ -327,7 +323,7 @@ var HVEventsView = (function () {
           onclick: function () {
             HVApi.hv('events.linkTeam', { eventId: ev.id, teamId: tm.id }).then(function (res) {
               if (res && res.ok) { HVUI.closeModal(); toast('Team linked.'); reopen(host, ctx); } else toast(HVApi.err(res), true); });
-          } }, (tm.icon ? tm.icon + '  ' : '') + tm.name));
+          } }, tm.name));
       });
     });
   }

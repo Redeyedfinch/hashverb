@@ -15,7 +15,6 @@ var HVTeamsView = (function () {
     Operations: '#524b5c', Finance: '#0B7278', Documentation: '#6d6675',
     Sponsorship: '#b8860b', Other: '#17131f'
   };
-  var TEAM_ICONS = ['🤖', '🧠', '🔐', '🎨', '📣', '🎯', '⚙️', '💰', '📄', '🤝', '🚀', '⚡'];
   var domainsCache = null;
 
   var state = { openId: null };
@@ -81,7 +80,7 @@ var HVTeamsView = (function () {
         onclick: function () { state.openId = tm.id; view.render(host, ctx); }
       }, [
         el('div', { class: 'row' }, [
-          el('div', { style: 'font-size:26px', text: tm.icon || '🚀' }),
+          HVUI.tile(tm.name, DOMAIN_COLORS[tm.domain] || tm.color || '#17131f', 34),
           el('span', { class: 'spacer' }),
           tm.myRank ? el('span', { class: 'chip role', text: rankLabel(tm.myRank) }) : null
         ]),
@@ -115,7 +114,7 @@ var HVTeamsView = (function () {
 
       host.appendChild(el('div', { class: 'card', style: 'border-left:6px solid ' + esc(tm.color || c) }, [
         el('div', { class: 'row wrap' }, [
-          el('div', { style: 'font-size:34px', text: tm.icon || '🚀' }),
+          HVUI.tile(tm.name, DOMAIN_COLORS[tm.domain] || tm.color || '#17131f', 46),
           el('div', {}, [
             el('h1', { class: 'section-title', style: 'margin:0', text: tm.name }),
             el('div', { class: 'row wrap', style: 'gap:6px;margin-top:4px' }, [ domainChip(tm.domain),
@@ -289,26 +288,12 @@ var HVTeamsView = (function () {
     if (tm) domainSel.value = tm.domain || '';
     var respIn = el('textarea', { placeholder: 'One responsibility per line' }, tm ? tm.responsibilities : '');
 
-    /* icon picker */
-    var chosenIcon = tm && tm.icon ? tm.icon : TEAM_ICONS[0];
-    var iconRow = el('div', { class: 'row wrap', style: 'gap:6px' });
-    TEAM_ICONS.forEach(function (ic) {
-      var b = el('button', { class: 'btn ghost small', style: 'font-size:18px', onclick: function () {
-        chosenIcon = ic; HVUI.$$('.ws-ico-btn', iconRow).forEach(function (x) { x.classList.remove('on'); });
-        b.classList.add('on');
-      }}, ic);
-      b.classList.add('ws-ico-btn');
-      if (ic === chosenIcon) b.classList.add('on');
-      iconRow.appendChild(b);
-    });
-
     HVUI.modal({
       title: tm ? 'Edit team' : 'New team',
       body: el('div', {}, [
         el('div', { class: 'field' }, [ el('label', { text: 'Name' }), nameIn ]),
         el('div', { class: 'field' }, [ el('label', { text: 'Description' }), descIn ]),
         el('div', { class: 'field' }, [ el('label', { text: 'Domain' }), domainSel ]),
-        el('div', { class: 'field' }, [ el('label', { text: 'Icon' }), iconRow ]),
         el('div', { class: 'field' }, [ el('label', { text: 'Responsibilities' }), respIn ])
       ]),
       foot: HVUI.footer([
@@ -317,7 +302,7 @@ var HVTeamsView = (function () {
           var name = nameIn.value.trim();
           if (!name) { toast('Give the team a name.', true); return; }
           var payload = { name: name, description: descIn.value.trim(), domain: domainSel.value,
-            icon: chosenIcon, responsibilities: respIn.value.trim() };
+            icon: '', responsibilities: respIn.value.trim() };
           var fn = tm ? 'teams.update' : 'teams.create';
           if (tm) payload.teamId = tm.id;
           HVApi.hv(fn, payload).then(function (r) {

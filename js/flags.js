@@ -42,7 +42,7 @@ var HVFlagsView = (function () {
     HVApi.hv('flags.list', { box: state.box }).then(function (r) {
       listHost.innerHTML = '';
       if (!r || !r.ok) { listHost.appendChild(HVUI.empty(HVApi.err(r, 'Could not load flags.'))); return; }
-      if (!r.flags.length) { listHost.appendChild(HVUI.empty(state.box === 'inbox' ? 'Nothing is waiting on you. 🎉' : 'You have not raised any flags.')); return; }
+      if (!r.flags.length) { listHost.appendChild(HVUI.empty(state.box === 'inbox' ? 'Nothing is waiting on you.' : 'You have not raised any flags.')); return; }
       var list = el('div', { class: 'stack' });
       r.flags.forEach(function (fl) { list.appendChild(flagCard(host, ctx, fl)); });
       listHost.appendChild(list);
@@ -65,7 +65,7 @@ var HVFlagsView = (function () {
     var meta = el('div', { class: 'row wrap', style: 'gap:6px;margin-top:8px' }, [
       el('span', { class: 'chip', text: fl.categoryLabel }),
       el('span', { class: 'chip', style: 'color:' + (PRIO_COLOR[fl.priority] || ''), text: fl.priority }),
-      fl.deadline ? el('span', { class: 'chip', text: '📅 ' + fl.deadline }) : null
+      fl.deadline ? el('span', { class: 'chip', text: 'Due ' + fl.deadline }) : null
     ]);
     var body = fl.detail ? el('p', { class: 'small', style: 'margin:8px 0 0;white-space:pre-wrap', text: fl.detail }) : null;
     var actions = el('div', { class: 'row wrap', style: 'gap:6px;margin-top:10px' });
@@ -75,7 +75,7 @@ var HVFlagsView = (function () {
     actions.appendChild(el('button', { class: 'btn ghost small', onclick: function () {
       if (discussHost.style.display === 'none') { discussHost.style.display = 'block'; HVComments.thread(discussHost, 'flag', fl.id); }
       else discussHost.style.display = 'none';
-    } }, '💬 Discuss'));
+    } }, 'Discuss'));
     return el('div', { class: 'card', style: 'border-left:6px solid ' + (STATUS_COLOR[fl.status] || 'var(--pink)') }, [ head, meta, body, actions, discussHost ]);
   }
 

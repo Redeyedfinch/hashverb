@@ -74,7 +74,7 @@ var HVAnnounce = (function () {
       r.announcements.forEach(function (a) {
         listHost.appendChild(el('div', { class: 'banner warn', style: 'margin-bottom:8px' }, [
           el('div', { class: 'row' }, [
-            el('div', { style: 'font-family:var(--display);font-weight:700', text: '📣 ' + a.title }),
+            el('div', { style: 'font-family:var(--display);font-weight:700', text: a.title }),
             el('span', { class: 'spacer' }),
             a.canRemove ? el('button', { class: 'x', title: 'Remove', onclick: function () { remove(host, me, a.id); } }, '✕') : null
           ]),

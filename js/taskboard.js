@@ -54,10 +54,10 @@ var HVTaskBoard = (function () {
     if (t.priority) card.style.borderLeft = '4px solid ' + (PRIORITY_COLOR[t.priority] || 'var(--line)');
     card.appendChild(el('div', { style: 'font-weight:600', text: t.title }));
     var meta = el('div', { class: 'row wrap', style: 'gap:5px;margin-top:6px' });
-    if (t.blockedBy) meta.appendChild(el('span', { class: 'chip', style: 'background:#ffe3ea;color:var(--danger)', text: '⛔ ' + t.blockedBy }));
+    if (t.blockedBy) meta.appendChild(el('span', { class: 'chip', style: 'background:#ffe3ea;color:var(--danger)', text: 'Blocked x' + t.blockedBy }));
     if (t.priority) meta.appendChild(el('span', { class: 'chip', style: 'color:' + (PRIORITY_COLOR[t.priority] || ''), text: t.priority }));
-    if (t.due) meta.appendChild(el('span', { class: 'chip', text: '📅 ' + t.due }));
-    if (t.checklistTotal) meta.appendChild(el('span', { class: 'chip', text: '☑ ' + t.checklistDone + '/' + t.checklistTotal }));
+    if (t.due) meta.appendChild(el('span', { class: 'chip', text: 'Due ' + t.due }));
+    if (t.checklistTotal) meta.appendChild(el('span', { class: 'chip', text: t.checklistDone + '/' + t.checklistTotal }));
     if (t.assigneeName) meta.appendChild(el('span', { class: 'chip role', text: t.assigneeName.split(/\s+/)[0] }));
     if (t.project) meta.appendChild(el('span', { class: 'chip', text: '# ' + t.project }));
     if (meta.childNodes.length) card.appendChild(meta);
@@ -211,7 +211,7 @@ var HVTaskBoard = (function () {
     HVApi.hv('tasks.myTasks', {}).then(function (r) {
       host.innerHTML = '';
       if (!r || !r.ok) { host.appendChild(HVUI.empty(HVApi.err(r, 'Could not load your tasks.'))); return; }
-      if (!r.tasks.length) { host.appendChild(HVUI.empty('No open tasks assigned to you. 🎉')); return; }
+      if (!r.tasks.length) { host.appendChild(HVUI.empty('No open tasks assigned to you.')); return; }
       var list = el('div', { class: 'stack' });
       r.tasks.forEach(function (t) {
         list.appendChild(el('div', { class: 'banner', style: 'border-left:4px solid ' + (PRIORITY_COLOR[t.priority] || 'var(--line)') }, [
@@ -219,7 +219,7 @@ var HVTaskBoard = (function () {
             el('div', {}, [ el('div', { style: 'font-weight:600', text: t.title }),
               el('div', { class: 'muted small', text: t.parentName + ' · ' + t.statusLabel + (t.due ? ' · due ' + t.due : '') }) ]),
             el('span', { class: 'spacer' }),
-            t.blockedBy ? el('span', { class: 'chip', style: 'background:#ffe3ea;color:var(--danger)', text: '⛔ ' + t.blockedBy }) : null
+            t.blockedBy ? el('span', { class: 'chip', style: 'background:#ffe3ea;color:var(--danger)', text: 'Blocked x' + t.blockedBy }) : null
           ])
         ]));
       });

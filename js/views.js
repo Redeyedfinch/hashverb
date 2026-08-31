@@ -30,6 +30,11 @@ var HVViews = (function () {
         ])
       ]));
 
+      /* quest / XP — the portal's gamified profile, first thing on Home */
+      var questHost = el('div', { style: 'margin-bottom:16px' });
+      host.appendChild(questHost);
+      renderQuestCard(questHost);
+
       /* at-a-glance personal tiles */
       var tilesHost = el('div', { style: 'margin-bottom:16px' });
       host.appendChild(tilesHost);
@@ -37,10 +42,10 @@ var HVViews = (function () {
 
       /* quick-links grid, gated by permission */
       var links = [];
-      if (HVPerm.canSeeView(me.perms, 'members')) links.push(link('👥', 'Members', 'Directory, roles & access', 'members'));
-      if (HVPerm.canSeeView(me.perms, 'roles')) links.push(link('🛡', 'Roles', 'Define what people can do', 'roles'));
-      if (HVPerm.canSeeView(me.perms, 'audit')) links.push(link('📜', 'Activity', 'Recent administrative actions', 'audit'));
-      links.push(link('🧑', 'Profile', 'Your account & devices', 'profile'));
+      if (HVPerm.canSeeView(me.perms, 'members')) links.push(link('Members', 'Directory, roles & access', 'members'));
+      if (HVPerm.canSeeView(me.perms, 'roles')) links.push(link('Roles', 'Define what people can do', 'roles'));
+      if (HVPerm.canSeeView(me.perms, 'audit')) links.push(link('Activity', 'Recent administrative actions', 'audit'));
+      links.push(link('Profile', 'Your account & devices', 'profile'));
 
       var grid = el('div', { class: 'tiles' });
       links.forEach(function (l) { grid.appendChild(l); });
@@ -69,18 +74,73 @@ var HVViews = (function () {
       host.appendChild(annCard);
       HVAnnounce.render(annCard, me);
 
-      function link(icon, title, sub, id) {
+      function link(title, sub, id) {
         return el('button', {
           class: 'tile', style: 'text-align:left;cursor:pointer',
           onclick: function () { ctx.go(id); }
         }, [
-          el('div', { class: 'n', style: 'font-size:26px', text: icon }),
-          el('div', { style: 'font-family:var(--display);font-weight:700;margin-top:6px', text: title }),
+          el('div', { style: 'font-family:var(--display);font-weight:700', text: title }),
           el('div', { class: 'l', text: sub })
         ]);
       }
     }
   };
+
+  /* ====================================================================
+     QUEST CARD — the original portal's gamified profile: level, XP bar into
+     the next level (400 XP each), daily check-in with streak. RetroUI, no
+     pictograms: pixel-font numerals and a hard-border bar.
+     ==================================================================== */
+  function renderQuestCard(host) {
+    host.appendChild(HVUI.loading('Loading your quest…'));
+    HVApi.hv('quest.profile', {}).then(function (p) {
+      host.innerHTML = '';
+      if (!p || !p.ok) return;   /* the quest card is a bonus - fail quiet */
+      paint(p);
+    });
+
+    function paint(p) {
+      host.innerHTML = '';
+      var pct = Math.max(0, Math.min(100, Math.round((p.xpInto / p.xpForLevel) * 100)));
+
+      var btn;
+      if (p.checkedInToday) {
+        btn = el('button', { class: 'btn ghost', disabled: 'disabled' }, 'Checked in today');
+      } else {
+        btn = el('button', { class: 'btn primary', onclick: function () {
+          btn.disabled = true;
+          HVApi.hv('quest.checkin', {}).then(function (r) {
+            if (r && r.ok) { toast('+' + r.gained + ' XP — streak ' + r.streak);
+              HVApi.hv('quest.profile', {}).then(function (fresh) { if (fresh && fresh.ok) paint(fresh); }); }
+            else { btn.disabled = false; toast(HVApi.err(r, 'Could not check in.'), true); }
+          });
+        } }, 'Daily check-in  +10 XP');
+      }
+
+      host.appendChild(el('div', { class: 'card' }, [
+        el('div', { class: 'row wrap' }, [
+          el('div', {}, [
+            el('div', { style: 'font-family:var(--pixel);font-size:11px;color:var(--pink-dark)', text: 'LVL ' + p.level }),
+            el('div', { style: 'font-family:var(--display);font-weight:700;font-size:22px;margin-top:4px', text: p.xp + ' XP' })
+          ]),
+          el('span', { class: 'spacer' }),
+          el('div', { style: 'text-align:right' }, [
+            el('div', { style: 'font-family:var(--mono);font-size:17px;color:var(--ink-dim)',
+              text: 'STREAK ' + p.streak + (p.streak === 1 ? ' DAY' : ' DAYS') }),
+            el('div', { class: 'muted small', text: p.xpInto + ' / ' + p.xpForLevel + ' to level ' + (p.level + 1) })
+          ])
+        ]),
+        el('div', { style: 'margin-top:12px;height:14px;border:2px solid var(--line);background:var(--bg)' },
+          el('div', { style: 'height:100%;width:' + pct + '%;background:var(--gold)' })),
+        el('div', { class: 'row wrap', style: 'margin-top:12px;gap:10px' }, [
+          btn,
+          el('span', { class: 'chip', text: 'Tasks done ' + p.tasksDone + ' (x' + p.taskXp + ')' }),
+          el('span', { class: 'chip', text: 'Weekly check-ins ' + p.weeklyCheckins + ' (x' + p.weeklyXp + ')' }),
+          el('span', { class: 'chip', text: 'Daily XP ' + p.dailyXp })
+        ])
+      ]));
+    }
+  }
 
   function rolesLine(me) {
     var org = (me.roles || []).filter(function (r) { return r.scope === 'org'; });
@@ -165,7 +225,7 @@ var HVViews = (function () {
           el('div', {}, [
             el('div', { style: 'font-weight:600', text: (u.name || u.email) + (isMe ? ' (you)' : '') }),
             el('div', { class: 'muted small', text: u.email }),
-            u.linked ? el('div', { class: 'muted small', text: '🔗 USN/mobile linked' }) : null
+            u.linked ? el('div', { class: 'muted small', text: 'USN/mobile linked' }) : null
           ])
         ]));
 

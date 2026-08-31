@@ -46,8 +46,8 @@ var HVBudgetBoard = (function () {
       tile(String(s.pendingCount) + '  (' + inr(s.pendingAmount) + ')', 'Pending')
     ]);
     var wrap = el('div', {}, [ tiles ]);
-    if (s.overCap) wrap.appendChild(el('div', { class: 'banner bad', style: 'margin-top:8px', text: '⚠ Committed spending is over the cap.' }));
-    else if (s.nearCap) wrap.appendChild(el('div', { class: 'banner warn', style: 'margin-top:8px', text: '⚠ Committed spending is near the cap.' }));
+    if (s.overCap) wrap.appendChild(el('div', { class: 'banner bad', style: 'margin-top:8px', text: 'Committed spending is over the cap.' }));
+    else if (s.nearCap) wrap.appendChild(el('div', { class: 'banner warn', style: 'margin-top:8px', text: 'Committed spending is near the cap.' }));
     if (r.canManage) wrap.appendChild(el('button', { class: 'btn ghost small', style: 'margin-top:8px', onclick: function () { capModal(host, parentType, parentId, s.cap); } }, 'Set cap'));
     return wrap;
   }

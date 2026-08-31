@@ -47,7 +47,8 @@ img { max-width:100%; }
 /* ---------------- layout ---------------- */
 .container { width:100%; max-width:var(--maxw); margin:0 auto; padding:0 20px; }
 .stack > * + * { margin-top:14px; }
-.row { display:flex; gap:12px; align-items:center; }
+.row { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+.row.nowrap { flex-wrap:nowrap; min-width:0; }
 .row.wrap { flex-wrap:wrap; }
 .spacer { flex:1; }
 .muted { color:var(--ink-faint); }
@@ -60,14 +61,18 @@ img { max-width:100%; }
   position:sticky; top:0; z-index:40; background:var(--bg);
   border-bottom:3px solid var(--line);
 }
-.nav-inner { display:flex; align-items:center; gap:12px; height:64px; }
-.brand { display:flex; align-items:center; gap:10px; font-family:var(--pixel); font-size:13px; }
-.brand .dot { width:12px; height:12px; background:var(--logo); border:2px solid var(--line); }
+.nav-top { display:flex; align-items:center; gap:12px; min-height:58px; flex-wrap:wrap; }
+.brand { display:flex; align-items:center; gap:10px; font-family:var(--pixel); font-size:13px; white-space:nowrap; }
+.brand .dot { width:12px; height:12px; background:var(--logo); border:2px solid var(--line); flex:0 0 auto; }
 .brand small { font-family:var(--mono); font-size:16px; color:var(--ink-faint); }
-.nav-right { margin-left:auto; display:flex; align-items:center; gap:10px; }
+.nav-utils { margin-left:auto; display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
 .who { display:flex; align-items:center; gap:8px; }
-.who img { width:30px; height:30px; border:2px solid var(--line); object-fit:cover; }
-.who .nm { font-weight:600; font-size:14px; max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.who img { width:30px; height:30px; border:2px solid var(--line); object-fit:cover; flex:0 0 auto; }
+.who .nm { font-weight:600; font-size:14px; max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+/* nav tabs strip — scrolls horizontally instead of overflowing the viewport */
+.nav-tabsbar { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.nav-tabsbar::-webkit-scrollbar { height:0; }
+.nav-tabsbar-inner { display:flex; width:max-content; min-width:100%; padding:2px 20px 10px; }
 
 /* ---------------- tabs / nav pills ---------------- */
 .tabs { display:flex; gap:0; flex-wrap:wrap; border:2px solid var(--line); background:var(--panel); width:max-content; box-shadow:var(--sh-sm); }
@@ -207,11 +212,29 @@ main.app { padding:22px 0 60px; }
 .page-head .spacer { flex:1; }
 
 /* ---------------- responsive ---------------- */
-@media (max-width:720px) {
-  .nav-inner { height:auto; min-height:60px; padding:8px 0; flex-wrap:wrap; }
-  .who .nm { max-width:100px; }
+@media (max-width:820px) {
+  .container { padding:0 14px; }
+  .nav-tabsbar-inner { padding-left:14px; padding-right:14px; }
+  .nav-top { min-height:52px; gap:8px; }
+  .hv-hide-sm { display:none !important; }
+  .who .nm { max-width:84px; }
   .card { padding:16px; }
   .tile .n { font-size:24px; }
+  .section-title { font-size:22px; }
+  /* full-screen modals on phones — far easier to use than a small floating box */
+  .modal { padding:0; }
+  .modal-card { width:100%; margin:0; min-height:100vh; box-shadow:none; }
+  .modal-foot { position:sticky; bottom:0; background:var(--panel); }
+  /* stat tiles: comfortable minimum so two fit a narrow screen without clipping */
+  .tiles { grid-template-columns:repeat(auto-fit,minmax(138px,1fr)); }
+}
+@media (max-width:440px) {
+  .tiles { grid-template-columns:1fr 1fr; }
+  .btn { font-size:14px; padding:9px 14px; }
+  .btn.small { padding:6px 11px; font-size:12px; }
+  .card h2 { font-size:19px; }
+  .card h3 { font-size:17px; }
+  .modal-foot .btn { flex:1 1 auto; justify-content:center; }
 }
 @media (hover:none) {
   .btn:active { transform:translate(3px,3px); }

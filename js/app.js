@@ -149,7 +149,7 @@
       el('span', { class: 'nm', text: (me.name || me.email).split(/\s+/)[0] })
     ]);
 
-    var motionBtn = el('button', { class: 'btn ghost small', onclick: function () {
+    var motionBtn = el('button', { class: 'btn ghost small hv-hide-sm', onclick: function () {
       var r = motion.toggle(); motionBtn.textContent = 'MOTION: ' + (r ? 'OFF' : 'ON');
     }}, 'MOTION: ' + (motion.reduced() ? 'OFF' : 'ON'));
 
@@ -159,13 +159,19 @@
       style: 'position:absolute;top:-6px;right:-6px;background:var(--pink);color:#fff;border:2px solid var(--line);font-family:var(--pixel);font-size:7px;padding:2px 4px;min-width:14px;text-align:center' });
     bell.appendChild(bellBadge);
 
-    var header = el('header', { class: 'nav' }, el('div', { class: 'container nav-inner' }, [
-      el('div', { class: 'brand' }, [ el('span', { class: 'dot' }), document.createTextNode('#HASH'),
-        el('small', { text: 'OS' }) ]),
-      el('div', { class: 'nav-right' }, [ navPills, bell, who, motionBtn,
-        el('button', { class: 'btn ghost small', title: 'Sign out',
-          onclick: function () { HVAuth.signOut().then(function () { showGate(); location.hash = ''; }); } }, 'Sign out') ])
-    ]));
+    var signoutBtn = el('button', { class: 'btn ghost small', title: 'Sign out',
+      onclick: function () { HVAuth.signOut().then(function () { showGate(); location.hash = ''; }); } }, 'Sign out');
+
+    var header = el('header', { class: 'nav' }, [
+      /* row 1: brand + utilities (bell, who, motion, sign out) */
+      el('div', { class: 'container nav-top' }, [
+        el('div', { class: 'brand' }, [ el('span', { class: 'dot' }), document.createTextNode('#HASH'),
+          el('small', { text: 'OS' }) ]),
+        el('div', { class: 'nav-utils' }, [ bell, who, motionBtn, signoutBtn ])
+      ]),
+      /* row 2: the nav tabs, a horizontally-scrollable strip on small screens */
+      el('div', { class: 'nav-tabsbar' }, el('div', { class: 'nav-tabsbar-inner' }, navPills))
+    ]);
 
     refreshBell();
 
@@ -225,7 +231,12 @@
 
   function highlightNav(id) {
     HVUI.$$('#navTabs .tab').forEach(function (t) {
-      t.classList.toggle('on', t.getAttribute('data-view') === id);
+      var on = t.getAttribute('data-view') === id;
+      t.classList.toggle('on', on);
+      /* keep the active tab visible in the scrollable strip on small screens */
+      if (on && t.scrollIntoView) {
+        try { t.scrollIntoView({ inline: 'center', block: 'nearest' }); } catch (e) { t.scrollIntoView(); }
+      }
     });
   }
 

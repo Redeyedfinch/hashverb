@@ -8,6 +8,7 @@
  */
 (function () {
   var el = HVUI.el;
+  var esc = HVUI.esc;
   var motion = HVUI.initMotion();
 
   var VIEWS = {

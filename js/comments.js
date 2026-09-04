@@ -57,7 +57,7 @@ var HVComments = (function () {
 var HVAnnounce = (function () {
   var el = HVUI.el, toast = HVUI.toast;
 
-  function render(host, me) {
+  function render(host, me, seed) {
     host.innerHTML = '';
     var canPost = HVPerm.has(me.perms, 'announcements.post');
     host.appendChild(el('div', { class: 'row' }, [
@@ -67,7 +67,7 @@ var HVAnnounce = (function () {
     var listHost = el('div', { style: 'margin-top:10px' });
     host.appendChild(listHost);
     listHost.appendChild(HVUI.loading('Loading…'));
-    HVApi.load('announcements.list', {}, function (r) {
+    var paint = function (r) {
       listHost.innerHTML = '';
       if (!r || !r.ok) { listHost.appendChild(HVUI.empty(HVApi.err(r, 'Could not load announcements.'))); return; }
       if (!r.announcements.length) { listHost.appendChild(el('div', { class: 'muted small', text: 'No announcements.' })); return; }
@@ -82,7 +82,10 @@ var HVAnnounce = (function () {
           el('div', { class: 'muted small', style: 'margin-top:4px', text: a.audienceLabel + ' · ' + a.by + ' · ' + HVUI.timeAgo(a.created) })
         ]));
       });
-    });
+    };
+    /* seed !== undefined: Home already fetched this via home.summary */
+    if (seed !== undefined) { HVApi.seed('announcements.list', {}, seed); paint(seed); }
+    else HVApi.load('announcements.list', {}, paint);
   }
 
   function remove(host, me, id) {

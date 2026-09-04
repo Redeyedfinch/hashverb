@@ -205,10 +205,10 @@ var HVTaskBoard = (function () {
   }
 
   /** Compact "my tasks" list into a host. */
-  function myTasks(host) {
+  function myTasks(host, seed) {
     host.innerHTML = '';
     host.appendChild(HVUI.loading('Loading your tasks…'));
-    HVApi.load('tasks.myTasks', {}, function (r) {
+    var paint = function (r) {
       host.innerHTML = '';
       if (!r || !r.ok) { host.appendChild(HVUI.empty(HVApi.err(r, 'Could not load your tasks.'))); return; }
       if (!r.tasks.length) { host.appendChild(HVUI.empty('No open tasks assigned to you.')); return; }
@@ -224,7 +224,10 @@ var HVTaskBoard = (function () {
         ]));
       });
       host.appendChild(list);
-    });
+    };
+    /* seed !== undefined: Home already fetched this via home.summary */
+    if (seed !== undefined) { HVApi.seed('tasks.myTasks', {}, seed); paint(seed); }
+    else HVApi.load('tasks.myTasks', {}, paint);
   }
 
   function sel() { return 'width:100%;padding:10px;border:2px solid var(--line)'; }

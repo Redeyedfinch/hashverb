@@ -31,10 +31,10 @@ var HVViews = (function () {
         ])
       ]));
 
-      /* at-a-glance KPI tiles, full width under the greeting */
+      /* at-a-glance KPI tiles, full width under the greeting (filled by the
+         single home.summary call below, alongside the other cards) */
       var tilesHost = el('div', { class: 'section-strip' });
       host.appendChild(tilesHost);
-      HVDash.homeTiles(tilesHost);
 
       /* dashboard: a wide work column + a narrower personal rail */
       var mainCol = el('div', { class: 'col' });
@@ -49,25 +49,36 @@ var HVViews = (function () {
       var myTasksHost = el('div', { style: 'margin-top:10px' });
       tasksCard.appendChild(myTasksHost);
       mainCol.appendChild(tasksCard);
-      HVTaskBoard.myTasks(myTasksHost);
 
       var annCard = el('div', { class: 'card' });
       mainCol.appendChild(annCard);
-      HVAnnounce.render(annCard, me);
 
       /* --- side rail: you --- */
       var questHost = el('div', {});
       sideCol.appendChild(questHost);
-      renderQuestCard(questHost);
 
       /* Shroomy's overview assistant (hides itself if the backend has no key) */
       var assistHost = el('div', {});
       sideCol.appendChild(assistHost);
-      HVAssist.card(assistHost, me);
 
       var ciCard = el('div', { class: 'card' });
       sideCol.appendChild(ciCard);
-      HVCheckins.card(ciCard);
+
+      /* ONE round-trip for the whole view. Apps Script serialises concurrent
+         calls, so bundling the six card reads into home.summary is the single
+         biggest load-time win. If it fails (offline), each card falls back to
+         its own fetch (seed left undefined). */
+      myTasksHost.appendChild(HVUI.loading('Loading your dashboard…'));
+      HVApi.hv('home.summary', {}).then(function (s) {
+        var ok = s && s.ok;
+        HVTaskBoard.myTasks(myTasksHost, ok ? s.myTasks : undefined);
+        HVAnnounce.render(annCard, me, ok ? s.announcements : undefined);
+        renderQuestCard(questHost, ok ? s.quest : undefined);
+        HVAssist.card(assistHost, me, ok ? s.assistEnabled : undefined);
+        HVCheckins.card(ciCard, ok ? s.checkin : undefined);
+        HVDash.homeTiles(tilesHost, ok ? s.tiles : undefined);
+        if (ok && s.notify && s.notify.ok && typeof window.__hvSetBell === 'function') window.__hvSetBell(s.notify.count);
+      });
 
       /* quick links, gated by permission */
       var links = [];
@@ -96,12 +107,15 @@ var HVViews = (function () {
      the next level (400 XP each), daily check-in with streak. RetroUI, no
      pictograms: pixel-font numerals and a hard-border bar.
      ==================================================================== */
-  function renderQuestCard(host) {
+  function renderQuestCard(host, seed) {
     host.appendChild(HVUI.loading('Loading your quest…'));
-    HVApi.load('quest.profile', {}, function (p) {
+    var onData = function (p) {
       if (!p || !p.ok) { if (!p || !p.auth) host.innerHTML = ''; return; }   /* the quest card is a bonus - fail quiet */
       paint(p);
-    });
+    };
+    /* seed !== undefined: Home already fetched this via home.summary */
+    if (seed !== undefined) { HVApi.seed('quest.profile', {}, seed); onData(seed); }
+    else HVApi.load('quest.profile', {}, onData);
 
     function paint(p) {
       host.innerHTML = '';

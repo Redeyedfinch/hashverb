@@ -7,9 +7,12 @@ var HVDash = (function () {
   var el = HVUI.el;
   var HEALTH = { green: { c: '#0f9d58', t: 'On track' }, yellow: { c: '#F4A400', t: 'Needs attention' }, red: { c: '#E11D48', t: 'At risk' } };
 
-  function homeTiles(host) {
+  function homeTiles(host, seed) {
     host.innerHTML = '';
-    HVApi.hv('dash.me', {}).then(function (r) {
+    host.classList.remove('hidden');
+    /* seed !== undefined means Home already fetched this in home.summary */
+    var p = (seed !== undefined) ? Promise.resolve(seed) : HVApi.hv('dash.me', {});
+    p.then(function (r) {
       if (!r || !r.ok) { host.classList.add('hidden'); return; }
       var t = r.tasks;
       var tiles = el('div', { class: 'tiles' }, [

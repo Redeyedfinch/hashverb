@@ -7,9 +7,11 @@
 var HVCheckins = (function () {
   var el = HVUI.el, toast = HVUI.toast;
 
-  function card(host) {
+  function card(host, seed) {
     host.innerHTML = '';
-    HVApi.hv('checkins.mine', {}).then(function (r) {
+    /* seed !== undefined: Home already fetched this via home.summary */
+    var p = (seed !== undefined) ? Promise.resolve(seed) : HVApi.hv('checkins.mine', {});
+    p.then(function (r) {
       host.innerHTML = '';
       var tw = (r && r.ok) ? r.thisWeek : null;
       host.appendChild(el('div', { class: 'row' }, [ el('h2', { text: 'Weekly check-in' }), el('span', { class: 'spacer' }),

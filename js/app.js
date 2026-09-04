@@ -168,8 +168,9 @@
       /* row 2: the nav tabs, a horizontally-scrollable strip on small screens */
       el('div', { class: 'nav-tabsbar' }, el('div', { class: 'nav-tabsbar-inner' }, navPills))
     ]);
-
-    refreshBell();
+    /* the bell count is set by home.summary on the Home route, and by
+       routeFromHash for every other view - so the shell itself makes no
+       separate notify call here. */
 
     var main = el('main', { class: 'app' }, el('div', { class: 'container', id: 'viewHost' }, []));
 
@@ -177,14 +178,17 @@
     app.appendChild(main);
   }
 
+  function setBadge(n) {
+    var b = HVUI.$('#bellBadge');
+    if (!b) return;
+    if (n > 0) { b.textContent = n > 99 ? '99+' : String(n); b.classList.remove('hidden'); }
+    else b.classList.add('hidden');
+  }
+  /* Home's home.summary carries the unread count, so it sets the bell directly
+     without a separate round-trip. */
+  window.__hvSetBell = setBadge;
   function refreshBell() {
-    HVApi.hv('notify.unreadCount', {}).then(function (r) {
-      var b = HVUI.$('#bellBadge');
-      if (!b) return;
-      var n = (r && r.ok) ? r.count : 0;
-      if (n > 0) { b.textContent = n > 99 ? '99+' : String(n); b.classList.remove('hidden'); }
-      else b.classList.add('hidden');
-    });
+    HVApi.hv('notify.unreadCount', {}).then(function (r) { setBadge((r && r.ok) ? r.count : 0); });
   }
 
   function notifPanel() {
@@ -258,6 +262,8 @@
       host.innerHTML = '';
       host.appendChild(el('div', { class: 'banner bad', text: 'This view hit an error. Reload the page.' }));
     }
+    /* Home sets the bell via home.summary; every other route refreshes it here. */
+    if (id !== 'home') refreshBell();
     window.scrollTo(0, 0);
   }
 

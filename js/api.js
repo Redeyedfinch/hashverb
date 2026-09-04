@@ -129,6 +129,10 @@ var HVApi = (function () {
     if (cache.hasOwnProperty(key)) { try { updater(cache[key]); } catch (e) {} }
   }
 
+  /* Warm the cache with data fetched some other way (e.g. a bundled
+     home.summary), so a later load() of the same read paints instantly. */
+  function seed(fn, args, data) { if (data && data.ok) cache[keyOf(fn, args)] = data; }
+
   /* Clear all caches (e.g. on sign-out). */
   function reset() { cache = {}; inflight = {}; }
 
@@ -139,7 +143,7 @@ var HVApi = (function () {
   }
 
   return {
-    hv: hv, load: load, bust: bust, patch: patch, reset: reset,
+    hv: hv, load: load, bust: bust, patch: patch, seed: seed, reset: reset,
     token: token, setToken: setToken, signedIn: signedIn, err: err,
     onAuthLost: null
   };

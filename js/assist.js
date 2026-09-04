@@ -13,8 +13,10 @@ var HVAssist = (function () {
   var el = HVUI.el, toast = HVUI.toast;
   var enabled = null;   /* cached across renders this session */
 
-  function card(host, me) {
-    /* decide visibility once; if off, render nothing */
+  function card(host, me, seedEnabled) {
+    /* Home passes the enabled flag from home.summary, so no separate
+       assist.status round-trip is needed on the initial load. */
+    if (seedEnabled !== undefined) enabled = !!seedEnabled;
     if (enabled === false) return;
     if (enabled === null) {
       HVApi.hv('assist.status', {}).then(function (r) {

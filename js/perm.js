@@ -72,6 +72,9 @@ var HVPerm = (function () {
       { key: 'comments.create',     label: 'Comment & @mention' },
       { key: 'announcements.post',  label: 'Post announcements', desc: 'Heads & secretaries.' }
     ]},
+    { group: 'Recruitment', keys: [
+      { key: 'applications.review', label: 'Review join applications', desc: 'See and process public "join #Hash" applications — includes applicant contact details.' }
+    ]},
     { group: 'Files', keys: [
       { key: 'files.approve', label: 'Approve ANY file', desc: 'Org-wide file approver. Normally files are approved by the team/event manager. Uploading is open to members.' }
     ]},
@@ -107,6 +110,7 @@ var HVPerm = (function () {
     { id: 'flags',   label: 'Flags',   gate: null },   /* everyone sees flags relevant to them */
     { id: 'command', label: 'Command', gate: ['reports.view'] },
     { id: 'members', label: 'Members', gate: ['members.view', 'roles.manage'] },
+    { id: 'apply',   label: 'Applications', gate: ['applications.review'] },
     { id: 'roles',   label: 'Roles',   gate: ['roles.manage'] },
     { id: 'audit',   label: 'Activity', gate: ['roles.manage'] },
     { id: 'profile', label: 'Profile', gate: null }

@@ -60,7 +60,13 @@ t('hasAny: true if the user holds any one of the keys', function () {
 /* ----- nav gating: the exact screens each role sees ----- */
 
 t('nav: an admin (star) sees every nav item', function () {
-  arrEq(HVPerm.navFor(['*']), ['home', 'events', 'teams', 'flags', 'command', 'members', 'roles', 'audit', 'profile']);
+  arrEq(HVPerm.navFor(['*']), ['home', 'events', 'teams', 'flags', 'command', 'members', 'apply', 'roles', 'audit', 'profile']);
+});
+
+t('nav: applications.review opens Applications (and nothing else gated)', function () {
+  arrEq(HVPerm.navFor(['applications.review']), ['home', 'events', 'teams', 'flags', 'apply', 'profile']);
+  ok(HVPerm.canSeeView(['applications.review'], 'apply'));
+  ok(!HVPerm.canSeeView(['members.view'], 'apply'), 'members.view alone opened Applications');
 });
 
 t('nav: a plain member sees home, events, teams, flags and profile', function () {

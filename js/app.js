@@ -13,9 +13,9 @@
 
   var VIEWS = {
     home: HVViews.home, events: HVEventsView, teams: HVTeamsView, flags: HVFlagsView, command: HVDashView,
-    members: HVViews.members, roles: HVViews.roles, audit: HVViews.audit, profile: HVViews.profile
+    members: HVViews.members, apply: HVAppsView, roles: HVViews.roles, audit: HVViews.audit, profile: HVViews.profile
   };
-  var LABEL = { home: 'Home', events: 'Events', teams: 'Teams', flags: 'Flags', command: 'Command', members: 'Members', roles: 'Roles', audit: 'Activity', profile: 'Profile' };
+  var LABEL = { home: 'Home', events: 'Events', teams: 'Teams', flags: 'Flags', command: 'Command', members: 'Members', apply: 'Applications', roles: 'Roles', audit: 'Activity', profile: 'Profile' };
 
   var app = HVUI.$('#app');
   var gate = HVUI.$('#gate');
@@ -66,7 +66,9 @@
       el('div', { class: 'eyebrow', text: '// hashverb operating system' }),
       el('p', { class: 'section-sub', style: 'margin-top:10px', text: 'Sign in with your Google account to continue.' }),
       message ? el('div', { class: 'banner info', style: 'margin-top:12px;text-align:left', text: message }) : null,
-      el('div', { class: 'gsi', id: 'gsiBtn' }, HVUI.loading('Loading Google sign-in…'))
+      el('div', { class: 'gsi', id: 'gsiBtn' }, HVUI.loading('Loading Google sign-in…')),
+      el('a', { class: 'btn ghost small', style: 'margin-top:14px;display:inline-block', href: 'join.html' },
+        'New here? Apply to join #Hash')
     ])));
     tryRenderButton(0);
   }

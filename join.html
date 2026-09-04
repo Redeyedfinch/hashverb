@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>#Hash · Join the club</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#FFF3D9">
+  <meta name="description" content="Apply to join #Hash — pick your team: Events, Tech, PR or Socials.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@500;600;700&family=VT323&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/app.css">
+  <style>
+    /* page-local only, jn- prefixed */
+    .jn-wrap { max-width: 640px; margin: 0 auto; padding: 24px 16px 60px; }
+    .jn-brand { display: flex; align-items: baseline; gap: 10px; margin-bottom: 18px; }
+    .jn-brand .b { font-family: var(--pixel, 'Press Start 2P', monospace); font-size: 18px; }
+    .jn-brand .t { font-family: var(--mono, 'VT323', monospace); font-size: 18px; opacity: .7; }
+    .jn-teams { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 4px; }
+    @media (max-width: 460px) { .jn-teams { grid-template-columns: 1fr; } }
+    .jn-team { text-align: left; cursor: pointer; padding: 12px; background: var(--panel, #fff);
+               border: 2px solid var(--line, #17131f); box-shadow: 3px 3px 0 var(--line, #17131f); }
+    .jn-team:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--line, #17131f); }
+    .jn-team .nm { font-family: var(--display, 'Space Grotesk', sans-serif); font-weight: 700; font-size: 15px; }
+    .jn-team .bl { font-size: 12.5px; opacity: .8; margin-top: 4px; line-height: 1.45; }
+    .jn-team.on { background: var(--line, #17131f); color: #FFF3D9; }
+    .jn-team.on .bl { opacity: .9; }
+    .jn-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 460px) { .jn-grid2 { grid-template-columns: 1fr; } }
+    .jn-field { margin-top: 12px; }
+    .jn-field label { display: block; font-family: var(--mono, 'VT323', monospace); font-size: 15px;
+                      letter-spacing: .04em; margin-bottom: 4px; }
+    .jn-field input, .jn-field select, .jn-field textarea {
+      width: 100%; box-sizing: border-box; padding: 10px 12px; font: inherit;
+      background: var(--panel, #fff); border: 2px solid var(--line, #17131f); }
+    .jn-field textarea { min-height: 84px; resize: vertical; }
+    .jn-hp { position: absolute; left: -9999px; top: -9999px; height: 1px; width: 1px; opacity: 0; }
+    .jn-errs { margin: 12px 0 0; padding-left: 18px; }
+    .jn-errs li { margin: 3px 0; }
+    .jn-foot { margin-top: 22px; font-size: 13px; opacity: .8; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="jn-wrap">
+    <div class="jn-brand"><span class="b">#HASH</span><span class="t">// join the crew</span></div>
+
+    <div class="card">
+      <div class="eyebrow">// recruitment</div>
+      <h1 style="margin:6px 0 8px">Join #Hash.</h1>
+      <p class="section-sub" style="margin:0">
+        We're not recruiting by domain any more — you join the club as a member of a
+        <strong>team</strong>. Pick where you want to work; the crew will contact you.
+      </p>
+    </div>
+
+    <form id="jnForm" class="card" style="margin-top:14px" novalidate>
+      <div id="jnBanner"></div>
+
+      <div class="jn-field"><label>Pick your team *</label></div>
+      <div class="jn-teams" id="jnTeams"></div>
+
+      <div class="jn-field">
+        <label for="jnTeam2">Second choice (optional)</label>
+        <select id="jnTeam2"><option value="">No second choice</option></select>
+      </div>
+
+      <div class="jn-grid2">
+        <div class="jn-field"><label for="jnName">Full name *</label>
+          <input id="jnName" autocomplete="name" maxlength="80"></div>
+        <div class="jn-field"><label for="jnUsn">USN *</label>
+          <input id="jnUsn" autocomplete="off" autocapitalize="characters" maxlength="24" placeholder="e.g. 23BTRCA042"></div>
+      </div>
+      <div class="jn-grid2">
+        <div class="jn-field"><label for="jnEmail">Email *</label>
+          <input id="jnEmail" type="email" autocomplete="email" maxlength="120"></div>
+        <div class="jn-field"><label for="jnMobile">Mobile *</label>
+          <input id="jnMobile" type="tel" autocomplete="tel" maxlength="16" placeholder="10-digit number"></div>
+      </div>
+      <div class="jn-grid2">
+        <div class="jn-field"><label for="jnProgram">Program *</label>
+          <input id="jnProgram" maxlength="60" placeholder="e.g. BCA, B.Tech CSE"></div>
+        <div class="jn-field"><label for="jnSem">Semester *</label>
+          <select id="jnSem"><option value="">Select…</option></select></div>
+      </div>
+      <div class="jn-field">
+        <label for="jnWhy">Why this team? (optional)</label>
+        <textarea id="jnWhy" maxlength="600" placeholder="One or two lines is plenty."></textarea>
+      </div>
+
+      <!-- honeypot: humans never see or fill this -->
+      <input class="jn-hp" id="jnWebsite" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <div class="jn-field">
+        <button class="btn primary block" id="jnSubmit" type="submit">Apply to join</button>
+      </div>
+    </form>
+
+    <div id="jnDone" class="card hidden" style="margin-top:14px"></div>
+
+    <div class="jn-foot">Already a member? <a href="./">Sign in to the #Hash OS</a></div>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    /* Fallback team list — keep in sync with JA_TEAMS in the backend's Join.js.
+       The live list from join.info wins whenever the server is reachable. */
+    var TEAMS = [
+      { key: 'events',  name: 'Events',
+        blurb: 'Plan and run everything we host — logistics, venues, schedules and the on-ground crew on event day.' },
+      { key: 'tech',    name: 'Tech',
+        blurb: 'Build the projects, workshops and tools — AI, robotics, cybersecurity, web. The maker core of the club.' },
+      { key: 'pr',      name: 'PR',
+        blurb: 'The club\'s voice — outreach, sponsors, speaker invites and collabs with other clubs and colleges.' },
+      { key: 'socials', name: 'Socials',
+        blurb: 'Content and community — Instagram and LinkedIn, posters, reels, photos and the memes.' }
+    ];
+    var picked = '';
+    var closed = false;
+
+    function $(id) { return document.getElementById(id); }
+
+    function post(api, payload) {
+      return fetch(HV_CONFIG.EXEC_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        credentials: 'omit',
+        body: JSON.stringify({ api: api, args: [payload || {}] }),
+        redirect: 'follow'
+      }).then(function (r) { return r.json(); })
+        .catch(function () { return { ok: false, errors: ['Could not reach the server. Check your connection and try again.'] }; });
+    }
+
+    function banner(kind, content) {
+      var host = $('jnBanner');
+      host.innerHTML = '';
+      if (!content) return;
+      var div = document.createElement('div');
+      div.className = 'banner ' + kind;
+      if (typeof content === 'string') div.textContent = content;
+      else div.appendChild(content);
+      host.appendChild(div);
+      div.scrollIntoView({ block: 'nearest' });
+    }
+
+    function renderTeams() {
+      var host = $('jnTeams');
+      host.innerHTML = '';
+      TEAMS.forEach(function (t) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'jn-team' + (picked === t.key ? ' on' : '');
+        b.setAttribute('role', 'radio');
+        b.setAttribute('aria-checked', picked === t.key ? 'true' : 'false');
+        var nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = t.name;
+        var bl = document.createElement('div'); bl.className = 'bl'; bl.textContent = t.blurb;
+        b.appendChild(nm); b.appendChild(bl);
+        b.addEventListener('click', function () { picked = t.key; renderTeams(); renderTeam2(); });
+        host.appendChild(b);
+      });
+    }
+
+    function renderTeam2() {
+      var sel = $('jnTeam2');
+      var keep = sel.value;
+      sel.innerHTML = '';
+      var none = document.createElement('option');
+      none.value = ''; none.textContent = 'No second choice';
+      sel.appendChild(none);
+      TEAMS.forEach(function (t) {
+        if (t.key === picked) return;
+        var o = document.createElement('option');
+        o.value = t.key; o.textContent = t.name;
+        sel.appendChild(o);
+      });
+      if (keep && keep !== picked) sel.value = keep;
+    }
+
+    function renderSem() {
+      var sel = $('jnSem');
+      for (var i = 1; i <= 8; i++) {
+        var o = document.createElement('option');
+        o.value = String(i); o.textContent = 'Semester ' + i;
+        sel.appendChild(o);
+      }
+    }
+
+    function setClosed() {
+      closed = true;
+      banner('warn', 'Applications are closed right now. Watch #Hash for the next intake.');
+      $('jnSubmit').disabled = true;
+    }
+
+    function submit(ev) {
+      ev.preventDefault();
+      if (closed) return;
+      var errs = [];
+      if (!picked) errs.push('Pick the team you want to join.');
+      if (!$('jnName').value.trim()) errs.push('Tell us your name.');
+      if (!$('jnUsn').value.trim()) errs.push('Enter your USN.');
+      if (!$('jnEmail').value.trim()) errs.push('Enter your email address.');
+      if (!$('jnMobile').value.trim()) errs.push('Enter your mobile number.');
+      if (!$('jnProgram').value.trim()) errs.push('Tell us your program.');
+      if (!$('jnSem').value) errs.push('Pick your semester.');
+      if (errs.length) { showErrors(errs); return; }
+
+      var btn = $('jnSubmit');
+      btn.disabled = true; btn.textContent = 'Sending…';
+      post('hv.join.apply', {
+        name: $('jnName').value, usn: $('jnUsn').value, email: $('jnEmail').value,
+        mobile: $('jnMobile').value, program: $('jnProgram').value, semester: $('jnSem').value,
+        team: picked, team2: $('jnTeam2').value, why: $('jnWhy').value,
+        website: $('jnWebsite').value
+      }).then(function (r) {
+        btn.disabled = false; btn.textContent = 'Apply to join';
+        if (r && r.ok) return done(r.updated === true);
+        showErrors((r && r.errors) || ['Something went wrong. Please try again.']);
+      });
+    }
+
+    function showErrors(errs) {
+      var ul = document.createElement('ul');
+      ul.className = 'jn-errs';
+      errs.forEach(function (e) {
+        var li = document.createElement('li'); li.textContent = e; ul.appendChild(li);
+      });
+      var wrap = document.createElement('div');
+      var strong = document.createElement('strong'); strong.textContent = 'Almost there:';
+      wrap.appendChild(strong); wrap.appendChild(ul);
+      banner('bad', wrap);
+    }
+
+    function teamName(key) {
+      for (var i = 0; i < TEAMS.length; i++) if (TEAMS[i].key === key) return TEAMS[i].name;
+      return key;
+    }
+
+    function done(updated) {
+      $('jnForm').classList.add('hidden');
+      var card = $('jnDone');
+      card.classList.remove('hidden');
+      card.innerHTML = '';
+      var eb = document.createElement('div'); eb.className = 'eyebrow';
+      eb.textContent = updated ? '// application updated' : '// application received';
+      var h = document.createElement('h2');
+      h.textContent = (updated ? 'Updated — you\'re down for ' : 'You\'re in the queue for ') + teamName(picked) + '.';
+      var p = document.createElement('p'); p.className = 'section-sub';
+      p.textContent = 'The crew will reach you on the number and email you gave, usually within a few days. Applying again with the same USN or email just updates this application.';
+      card.appendChild(eb); card.appendChild(h); card.appendChild(p);
+      window.scrollTo(0, 0);
+    }
+
+    /* boot */
+    renderTeams(); renderTeam2(); renderSem();
+    $('jnForm').addEventListener('submit', submit);
+    post('hv.join.info', {}).then(function (r) {
+      if (r && r.ok && r.teams && r.teams.length) { TEAMS = r.teams; renderTeams(); renderTeam2(); }
+      if (r && r.ok && r.closed) setClosed();
+    });
+  })();
+  </script>
+</body>
+</html>

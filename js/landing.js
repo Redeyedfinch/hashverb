@@ -86,6 +86,7 @@ var HVLanding = (function () {
       el('div', { class: 'lp-bar' }, [
         el('div', { class: 'brand' }, [ el('span', { class: 'dot' }), document.createTextNode('#HASH'), el('small', { text: 'OS' }) ]),
         el('span', { class: 'spacer' }),
+        el('a', { class: 'btn ghost small', style: 'text-decoration:none', href: 'https://redeyedfinch.github.io/play/arcade.html', target: '_blank', rel: 'noopener' }, 'Arcade'),
         el('a', { class: 'btn ghost small', style: 'text-decoration:none', href: 'join.html' }, 'Apply to join')
       ]),
       opts.message ? el('div', { class: 'container' }, el('div', { class: 'banner info', style: 'margin-top:14px', text: opts.message })) : null,

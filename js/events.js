@@ -83,14 +83,22 @@ var HVEventsView = (function () {
   /* ================= detail (command center) ================= */
   function renderDetail(host, ctx, eventId) {
     host.innerHTML = '';
-    host.appendChild(HVUI.loading('Loading event…'));
-    HVApi.load('events.get', { eventId: eventId }, function (r) {
+    host.appendChild(HVUI.skeleton(6));
+    /* ONE round-trip for the whole event detail (header + every board), then
+       seed each board's cache so it paints instantly. */
+    HVApi.hv('event.summary', { eventId: eventId }).then(function (s) {
       host.innerHTML = '';
-      if (!r || !r.ok) {
+      if (!s || !s.ok || !s.get || !s.get.ok) {
         host.appendChild(el('button', { class: 'btn ghost small', onclick: back }, '← Events'));
-        host.appendChild(HVUI.empty(HVApi.err(r, 'Could not open that event.')));
+        host.appendChild(HVUI.empty(HVApi.err(s && s.get, 'Could not open that event.')));
         return;
       }
+      var r = s.get;
+      var pt = { parentType: 'event', parentId: eventId };
+      HVApi.seed('tasks.list', pt, s.tasks);
+      HVApi.seed('files.list', pt, s.files);
+      HVApi.seed('budgets.list', pt, s.budgets);
+      HVApi.seed('meetings.list', pt, s.meetings);
       var ev = r.event, caps = r.caps;
       host.appendChild(el('button', { class: 'btn ghost small', style: 'margin-bottom:12px', onclick: back }, '← All events'));
 

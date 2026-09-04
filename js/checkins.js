@@ -36,7 +36,7 @@ var HVCheckins = (function () {
   function team(host, teamId) {
     host.innerHTML = '';
     host.appendChild(HVUI.loading('Loading check-ins…'));
-    HVApi.hv('checkins.team', { teamId: teamId }).then(function (r) {
+    HVApi.load('checkins.team', { teamId: teamId }, function (r) {
       host.innerHTML = '';
       if (!r || !r.ok) { host.appendChild(HVUI.empty(HVApi.err(r, 'Not available.'))); return; }
       var s = r.summary;
@@ -71,7 +71,7 @@ var HVMeetings = (function () {
 
   function render(host, parentType, parentId) {
     host.innerHTML = '';
-    HVApi.hv('meetings.list', { parentType: parentType, parentId: parentId }).then(function (r) {
+    HVApi.load('meetings.list', { parentType: parentType, parentId: parentId }, function (r) {
       host.innerHTML = '';
       if (!r || !r.ok) { host.appendChild(HVUI.empty(HVApi.err(r, 'Could not load meetings.'))); return; }
       host.appendChild(el('div', { class: 'row', style: 'margin-bottom:10px' }, [

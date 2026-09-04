@@ -12,7 +12,7 @@ var HVBudgetBoard = (function () {
   function render(host, parentType, parentId) {
     host.innerHTML = '';
     ensureMeta().then(function () {
-      HVApi.hv('budgets.list', { parentType: parentType, parentId: parentId }).then(function (r) {
+      HVApi.load('budgets.list', { parentType: parentType, parentId: parentId }, function (r) {
         host.innerHTML = '';
         if (!r || !r.ok) { host.appendChild(HVUI.empty(HVApi.err(r, 'Could not load the budget.'))); return; }
         host.appendChild(summaryBar(host, parentType, parentId, r));

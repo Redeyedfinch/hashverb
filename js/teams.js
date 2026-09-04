@@ -94,14 +94,24 @@ var HVTeamsView = (function () {
   /* ================= detail ================= */
   function renderDetail(host, ctx, teamId) {
     host.innerHTML = '';
-    host.appendChild(HVUI.loading('Loading team…'));
-    HVApi.load('teams.get', { teamId: teamId }, function (r) {
+    host.appendChild(HVUI.skeleton(6));
+    /* ONE round-trip for the whole team detail: team.summary bundles the header
+       read and every board's read, then seeds each board's cache so it paints
+       instantly (SWR revalidates in the background). */
+    HVApi.hv('team.summary', { teamId: teamId }).then(function (s) {
       host.innerHTML = '';
-      if (!r || !r.ok) {
+      if (!s || !s.ok || !s.get || !s.get.ok) {
         host.appendChild(el('button', { class: 'btn ghost small', onclick: back }, '← Teams'));
-        host.appendChild(HVUI.empty(HVApi.err(r, 'Could not open that team.')));
+        host.appendChild(HVUI.empty(HVApi.err(s && s.get, 'Could not open that team.')));
         return;
       }
+      var r = s.get;
+      var pt = { parentType: 'team', parentId: teamId };
+      HVApi.seed('tasks.list', pt, s.tasks);
+      HVApi.seed('files.list', pt, s.files);
+      HVApi.seed('budgets.list', pt, s.budgets);
+      HVApi.seed('meetings.list', pt, s.meetings);
+      if (s.checkins) HVApi.seed('checkins.team', { teamId: teamId }, s.checkins);
       var tm = r.team, caps = r.caps, members = r.members;
       var c = DOMAIN_COLORS[tm.domain] || '#17131f';
 

@@ -208,8 +208,30 @@ body.reduce-motion .spin { animation:none; }
 main.app { padding:22px 0 60px; }
 .view { display:none; }
 .view.on { display:block; }
-.page-head { display:flex; align-items:flex-end; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+.page-head { display:flex; align-items:flex-end; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
 .page-head .spacer { flex:1; }
+
+/* ---------------- dashboard grid ----------------
+   Home was a single tall stack of full-width cards. This lays the work out as
+   a proper dashboard: a wider main column (tasks, announcements) beside a
+   narrower rail (quest, assistant, check-in, links). Collapses to one column
+   on small screens. Same RetroUI cards - only the arrangement changes. */
+.dash { display:grid; grid-template-columns:1.7fr 1fr; gap:16px; align-items:start; }
+.dash > .col { display:flex; flex-direction:column; gap:16px; min-width:0; }
+.dash .col > .card + .card { margin-top:0; }   /* the column gap owns the spacing */
+.section-strip { margin-bottom:18px; }         /* KPI tiles sit full-width under the greeting */
+@media (max-width:900px) { .dash { grid-template-columns:1fr; } }
+
+/* a soft lift on interactive tiles so the page feels alive, not static */
+.tile.link { transition:transform .08s ease, box-shadow .08s ease; }
+.tile.link:hover { transform:translate(-2px,-2px); box-shadow:5px 5px 0 var(--line); }
+.tile.link:active { transform:translate(0,0); box-shadow:var(--sh-sm); }
+body.reduce-motion .tile.link { transition:none; }
+
+/* the assistant answer block */
+.assist-out { border:2px solid var(--line); background:var(--bg); padding:12px 14px; margin-top:12px; font-size:15px; line-height:1.55; white-space:pre-wrap; }
+.assist-row { display:flex; gap:8px; margin-top:12px; }
+.assist-row input { flex:1; min-width:0; }
 
 /* ---------------- responsive ---------------- */
 @media (max-width:820px) {

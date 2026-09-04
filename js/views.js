@@ -22,6 +22,7 @@ var HVViews = (function () {
       var greet = greetHour < 12 ? 'Good morning' : greetHour < 17 ? 'Good afternoon' : 'Good evening';
       var firstName = String(me.name || me.email).split(/\s+/)[0];
 
+      /* greeting */
       host.appendChild(el('div', { class: 'page-head' }, [
         el('div', {}, [
           el('div', { class: 'eyebrow', text: '// ' + HV_CONFIG.ORG_NAME.toLowerCase() }),
@@ -30,53 +31,57 @@ var HVViews = (function () {
         ])
       ]));
 
-      /* quest / XP — the portal's gamified profile, first thing on Home */
-      var questHost = el('div', { style: 'margin-bottom:16px' });
-      host.appendChild(questHost);
-      renderQuestCard(questHost);
-
-      /* at-a-glance personal tiles */
-      var tilesHost = el('div', { style: 'margin-bottom:16px' });
+      /* at-a-glance KPI tiles, full width under the greeting */
+      var tilesHost = el('div', { class: 'section-strip' });
       host.appendChild(tilesHost);
       HVDash.homeTiles(tilesHost);
 
-      /* quick-links grid, gated by permission */
-      var links = [];
-      if (HVPerm.canSeeView(me.perms, 'members')) links.push(link('Members', 'Directory, roles & access', 'members'));
-      if (HVPerm.canSeeView(me.perms, 'roles')) links.push(link('Roles', 'Define what people can do', 'roles'));
-      if (HVPerm.canSeeView(me.perms, 'audit')) links.push(link('Activity', 'Recent administrative actions', 'audit'));
-      links.push(link('Profile', 'Your account & devices', 'profile'));
+      /* dashboard: a wide work column + a narrower personal rail */
+      var mainCol = el('div', { class: 'col' });
+      var sideCol = el('div', { class: 'col' });
+      host.appendChild(el('div', { class: 'dash' }, [ mainCol, sideCol ]));
 
-      var grid = el('div', { class: 'tiles' });
-      links.forEach(function (l) { grid.appendChild(l); });
-      host.appendChild(el('div', { class: 'card' }, [
-        el('h2', { text: 'Jump to' }),
-        grid
-      ]));
-
-      /* my tasks */
-      var tasksCard = el('div', { class: 'card', style: 'margin-top:16px' }, [
+      /* --- main column: the work --- */
+      var tasksCard = el('div', { class: 'card' }, [
         el('div', { class: 'row' }, [ el('h2', { text: 'My tasks' }), el('span', { class: 'spacer' }),
           el('button', { class: 'btn ghost small', onclick: function () { ctx.go('teams'); } }, 'Teams →') ])
       ]);
       var myTasksHost = el('div', { style: 'margin-top:10px' });
       tasksCard.appendChild(myTasksHost);
-      host.appendChild(tasksCard);
+      mainCol.appendChild(tasksCard);
       HVTaskBoard.myTasks(myTasksHost);
 
-      /* weekly check-in */
-      var ciCard = el('div', { class: 'card', style: 'margin-top:16px' });
-      host.appendChild(ciCard);
+      var annCard = el('div', { class: 'card' });
+      mainCol.appendChild(annCard);
+      HVAnnounce.render(annCard, me);
+
+      /* --- side rail: you --- */
+      var questHost = el('div', {});
+      sideCol.appendChild(questHost);
+      renderQuestCard(questHost);
+
+      /* Shroomy's overview assistant (hides itself if the backend has no key) */
+      var assistHost = el('div', {});
+      sideCol.appendChild(assistHost);
+      HVAssist.card(assistHost, me);
+
+      var ciCard = el('div', { class: 'card' });
+      sideCol.appendChild(ciCard);
       HVCheckins.card(ciCard);
 
-      /* announcements */
-      var annCard = el('div', { class: 'card', style: 'margin-top:16px' });
-      host.appendChild(annCard);
-      HVAnnounce.render(annCard, me);
+      /* quick links, gated by permission */
+      var links = [];
+      if (HVPerm.canSeeView(me.perms, 'members')) links.push(link('Members', 'Directory, roles & access', 'members'));
+      if (HVPerm.canSeeView(me.perms, 'roles')) links.push(link('Roles', 'Define what people can do', 'roles'));
+      if (HVPerm.canSeeView(me.perms, 'audit')) links.push(link('Activity', 'Recent administrative actions', 'audit'));
+      links.push(link('Profile', 'Your account & devices', 'profile'));
+      var grid = el('div', { class: 'tiles' });
+      links.forEach(function (l) { grid.appendChild(l); });
+      sideCol.appendChild(el('div', { class: 'card' }, [ el('h2', { text: 'Jump to' }), grid ]));
 
       function link(title, sub, id) {
         return el('button', {
-          class: 'tile', style: 'text-align:left;cursor:pointer',
+          class: 'tile link', style: 'text-align:left;cursor:pointer',
           onclick: function () { ctx.go(id); }
         }, [
           el('div', { style: 'font-family:var(--display);font-weight:700', text: title }),

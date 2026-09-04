@@ -113,8 +113,15 @@ var HVAppsView = (function () {
       el('span', { class: 'chip', style: 'border-color:' + st.color + ';color:' + st.color, text: st.label })
     ]);
 
+    /* USN is optional now — build the meta line from the parts that exist */
+    var bits = [];
+    if (a.usn) bits.push(a.usn);
+    if (a.program) bits.push(a.program);
+    var sem = 'Sem ' + a.semester + (a.section ? ' · Sec ' + a.section : '');
+    bits.push(sem);
+    bits.push('applied ' + HVUI.timeAgo(a.created));
     var meta = el('div', { class: 'small muted', style: 'margin-top:4px' }, [
-      el('span', { text: a.usn + ' · ' + a.program + ' · Sem ' + a.semester + ' · applied ' + HVUI.timeAgo(a.created) })
+      el('span', { text: bits.join(' · ') })
     ]);
     var contact = el('div', { class: 'small', style: 'margin-top:6px' }, [
       el('a', { href: 'mailto:' + esc(a.email), text: a.email }),
@@ -123,6 +130,7 @@ var HVAppsView = (function () {
     ]);
 
     var kids = [head, meta, contact];
+    if (a.interests) kids.push(el('div', { class: 'small muted', style: 'margin-top:6px', text: 'Interests: ' + a.interests }));
     if (a.why) kids.push(el('div', { class: 'small', style: 'margin-top:6px;font-style:italic', text: '“' + a.why + '”' }));
     if (a.note) kids.push(el('div', { class: 'banner info small', style: 'margin-top:6px', text: 'Note: ' + a.note }));
 

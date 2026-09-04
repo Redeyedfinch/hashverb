@@ -67,7 +67,7 @@
       <div class="jn-grid2">
         <div class="jn-field"><label for="jnName">Full name *</label>
           <input id="jnName" autocomplete="name" maxlength="80"></div>
-        <div class="jn-field"><label for="jnUsn">USN *</label>
+        <div class="jn-field"><label for="jnUsn">USN (optional)</label>
           <input id="jnUsn" autocomplete="off" autocapitalize="characters" maxlength="24" placeholder="e.g. 23BTRCA042"></div>
       </div>
       <div class="jn-grid2">
@@ -77,10 +77,20 @@
           <input id="jnMobile" type="tel" autocomplete="tel" maxlength="16" placeholder="10-digit number"></div>
       </div>
       <div class="jn-grid2">
-        <div class="jn-field"><label for="jnProgram">Program *</label>
-          <input id="jnProgram" maxlength="60" placeholder="e.g. BCA, B.Tech CSE"></div>
+        <div class="jn-field"><label for="jnDegree">Degree *</label>
+          <select id="jnDegree"><option value="">Select…</option></select></div>
+        <div class="jn-field"><label for="jnCourse">Course / branch *</label>
+          <input id="jnCourse" maxlength="60" placeholder="e.g. Computer Science"></div>
+      </div>
+      <div class="jn-grid2">
         <div class="jn-field"><label for="jnSem">Semester *</label>
           <select id="jnSem"><option value="">Select…</option></select></div>
+        <div class="jn-field"><label for="jnSection">Section (optional)</label>
+          <input id="jnSection" maxlength="24" placeholder="e.g. A"></div>
+      </div>
+      <div class="jn-field">
+        <label>Interests (optional)</label>
+        <div class="jn-teams" id="jnInterests" style="grid-template-columns:1fr 1fr 1fr"></div>
       </div>
       <div class="jn-field">
         <label for="jnWhy">Why this team? (optional)</label>
@@ -118,6 +128,10 @@
     ];
     var picked = '';
     var closed = false;
+    var DEGREES = ['B.Sc', 'B.C.A', 'B.Tech', 'B.Com', 'B.A', 'M.Sc', 'M.C.A', 'M.Tech', 'Other'];
+    var INTERESTS = ['AI / ML', 'Robotics', 'Cybersecurity', 'Web / App Dev', 'Design',
+                     'Content / Media', 'Electronics', 'Competitive Coding', 'Event Ops'];
+    var interestsOn = {};
 
     function $(id) { return document.getElementById(id); }
 
@@ -186,6 +200,35 @@
       }
     }
 
+    function renderDegrees() {
+      var sel = $('jnDegree');
+      DEGREES.forEach(function (d) {
+        var o = document.createElement('option');
+        o.value = d; o.textContent = d;
+        sel.appendChild(o);
+      });
+    }
+
+    function renderInterests() {
+      var host = $('jnInterests');
+      host.innerHTML = '';
+      INTERESTS.forEach(function (it) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'jn-team' + (interestsOn[it] ? ' on' : '');
+        b.style.padding = '9px 10px';
+        b.setAttribute('aria-pressed', interestsOn[it] ? 'true' : 'false');
+        var nm = document.createElement('div'); nm.className = 'nm'; nm.style.fontSize = '13px'; nm.textContent = it;
+        b.appendChild(nm);
+        b.addEventListener('click', function () {
+          if (interestsOn[it]) delete interestsOn[it]; else interestsOn[it] = true;
+          renderInterests();
+        });
+        host.appendChild(b);
+      });
+    }
+    function pickedInterests() { return Object.keys(interestsOn); }
+
     function setClosed() {
       closed = true;
       banner('warn', 'Applications are closed right now. Watch #Hash for the next intake.');
@@ -198,10 +241,10 @@
       var errs = [];
       if (!picked) errs.push('Pick the team you want to join.');
       if (!$('jnName').value.trim()) errs.push('Tell us your name.');
-      if (!$('jnUsn').value.trim()) errs.push('Enter your USN.');
       if (!$('jnEmail').value.trim()) errs.push('Enter your email address.');
       if (!$('jnMobile').value.trim()) errs.push('Enter your mobile number.');
-      if (!$('jnProgram').value.trim()) errs.push('Tell us your program.');
+      if (!$('jnDegree').value) errs.push('Select your degree.');
+      if (!$('jnCourse').value.trim()) errs.push('Enter your course or branch.');
       if (!$('jnSem').value) errs.push('Pick your semester.');
       if (errs.length) { showErrors(errs); return; }
 
@@ -209,7 +252,8 @@
       btn.disabled = true; btn.textContent = 'Sending…';
       post('hv.join.apply', {
         name: $('jnName').value, usn: $('jnUsn').value, email: $('jnEmail').value,
-        mobile: $('jnMobile').value, program: $('jnProgram').value, semester: $('jnSem').value,
+        mobile: $('jnMobile').value, degree: $('jnDegree').value, course: $('jnCourse').value,
+        semester: $('jnSem').value, section: $('jnSection').value, interests: pickedInterests(),
         team: picked, team2: $('jnTeam2').value, why: $('jnWhy').value,
         website: $('jnWebsite').value
       }).then(function (r) {
@@ -252,7 +296,7 @@
     }
 
     /* boot */
-    renderTeams(); renderTeam2(); renderSem();
+    renderTeams(); renderTeam2(); renderSem(); renderDegrees(); renderInterests();
     $('jnForm').addEventListener('submit', submit);
     post('hv.join.info', {}).then(function (r) {
       if (r && r.ok && r.teams && r.teams.length) { TEAMS = r.teams; renderTeams(); renderTeam2(); }

@@ -61,15 +61,9 @@
     app.classList.add('hidden');
     gate.classList.remove('hidden');
     gate.innerHTML = '';
-    gate.appendChild(el('div', { class: 'gate' }, el('div', { class: 'gate-card card' }, [
-      el('h1', { text: '#Hash' }),
-      el('div', { class: 'eyebrow', text: '// hashverb operating system' }),
-      el('p', { class: 'section-sub', style: 'margin-top:10px', text: 'Sign in with your Google account to continue.' }),
-      message ? el('div', { class: 'banner info', style: 'margin-top:12px;text-align:left', text: message }) : null,
-      el('div', { class: 'gsi', id: 'gsiBtn' }, HVUI.loading('Loading Google sign-in…')),
-      el('a', { class: 'btn ghost small', style: 'margin-top:14px;display:inline-block', href: 'join.html' },
-        'New here? Apply to join #Hash')
-    ])));
+    /* the public landing IS the sign-in surface — it contains #gsiBtn where GIS
+       mounts, so the boot flow below is unchanged. */
+    HVLanding.render(gate, { message: message });
     tryRenderButton(0);
   }
 

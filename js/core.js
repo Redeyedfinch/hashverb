@@ -58,11 +58,15 @@ var HVUI = (function () {
   /* ---------------- modal ---------------- */
   /* Opens a modal from {title, body(node), foot(node), onClose}. Returns a
      close() function. One modal at a time is plenty for this app. */
-  var modalHost;
+  var modalHost, lastFocus;
+  var FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
   function modal(opts) {
     close();
+    lastFocus = document.activeElement;           /* restore focus here on close */
+    try { document.body.classList.add('modal-open'); } catch (e) {}
     modalHost = el('div', { class: 'modal open' });
-    var card = el('div', { class: 'modal-card' });
+    var card = el('div', { class: 'modal-card', role: 'dialog', 'aria-modal': 'true',
+      'aria-label': opts.title || 'Dialog', tabindex: '-1' });
     var top = el('div', { class: 'modal-top' }, [
       el('h3', { text: opts.title || '' }),
       el('button', { class: 'x', 'aria-label': 'Close', onclick: close }, '✕')
@@ -75,16 +79,34 @@ var HVUI = (function () {
     modalHost.appendChild(card);
     modalHost.addEventListener('mousedown', function (e) { if (e.target === modalHost) close(); });
     document.body.appendChild(modalHost);
-    document.addEventListener('keydown', escClose);
-    function escClose(e) { if (e.key === 'Escape') close(); }
-    modal._esc = escClose;
+    document.addEventListener('keydown', onKey);
+    modal._key = onKey;
     if (opts.onClose) modal._onClose = opts.onClose;
+    /* move focus into the dialog (first field, else the card) */
+    setTimeout(function () {
+      var f = card.querySelector(FOCUSABLE);
+      try { (f || card).focus(); } catch (e) {}
+    }, 0);
+
+    function onKey(e) {
+      if (e.key === 'Escape') { close(); return; }
+      if (e.key !== 'Tab') return;
+      /* focus trap: keep Tab inside the dialog */
+      var items = card.querySelectorAll(FOCUSABLE);
+      if (!items.length) { e.preventDefault(); return; }
+      var first = items[0], last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); try { last.focus(); } catch (x) {} }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); try { first.focus(); } catch (x) {} }
+    }
     return close;
   }
   function close() {
-    if (modal._esc) { document.removeEventListener('keydown', modal._esc); modal._esc = null; }
+    if (modal._key) { document.removeEventListener('keydown', modal._key); modal._key = null; }
     if (modalHost && modalHost.parentNode) modalHost.parentNode.removeChild(modalHost);
     modalHost = null;
+    try { document.body.classList.remove('modal-open'); } catch (e) {}
+    if (lastFocus && lastFocus.focus) { try { lastFocus.focus(); } catch (e) {} }
+    lastFocus = null;
     if (modal._onClose) { var f = modal._onClose; modal._onClose = null; f(); }
   }
 
@@ -195,11 +217,20 @@ var HVUI = (function () {
   }
   function empty(label) { return el('div', { class: 'empty', text: label || 'Nothing here yet.' }); }
 
+  /* A shimmering skeleton placeholder — feels faster than a spinner because the
+     final shape is already there. `rows` bars, the first one wider (a title). */
+  function skeleton(rows) {
+    rows = rows || 3;
+    var wrap = el('div', { class: 'skel', 'aria-hidden': 'true' });
+    for (var i = 0; i < rows; i++) wrap.appendChild(el('div', { class: 'skel-bar' + (i === 0 ? ' skel-title' : '') }));
+    return wrap;
+  }
+
   return {
     $: $, $$: $$, el: el, esc: esc, toast: toast,
     modal: modal, closeModal: close, footer: footer, confirm: confirm,
     initMotion: initMotion, timeAgo: timeAgo, fmtDate: fmtDate, initials: initials,
     normId: normId, validId: validId, tile: tile,
-    loading: loading, empty: empty
+    loading: loading, empty: empty, skeleton: skeleton
   };
 })();

@@ -59,7 +59,7 @@ var HVTeamsView = (function () {
 
     var listHost = el('div', {});
     host.appendChild(listHost);
-    listHost.appendChild(HVUI.loading('Loading teams…'));
+    listHost.appendChild(el('div', { class: 'tiles' }, [ HVUI.skeleton(2), HVUI.skeleton(2), HVUI.skeleton(2) ]));
 
     HVApi.load('teams.list', {}, function (r) {
       listHost.innerHTML = '';

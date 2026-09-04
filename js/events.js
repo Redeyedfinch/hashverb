@@ -42,7 +42,7 @@ var HVEventsView = (function () {
 
     var listHost = el('div', {});
     host.appendChild(listHost);
-    listHost.appendChild(HVUI.loading('Loading events…'));
+    listHost.appendChild(el('div', { class: 'tiles' }, [ HVUI.skeleton(2), HVUI.skeleton(2), HVUI.skeleton(2) ]));
     HVApi.load('events.list', {}, function (r) {
       listHost.innerHTML = '';
       if (!r || !r.ok) { listHost.appendChild(HVUI.empty(HVApi.err(r, 'Could not load events.'))); return; }

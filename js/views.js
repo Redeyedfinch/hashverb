@@ -67,8 +67,14 @@ var HVViews = (function () {
       /* ONE round-trip for the whole view. Apps Script serialises concurrent
          calls, so bundling the six card reads into home.summary is the single
          biggest load-time win. If it fails (offline), each card falls back to
-         its own fetch (seed left undefined). */
-      myTasksHost.appendChild(HVUI.loading('Loading your dashboard…'));
+         its own fetch (seed left undefined). Skeletons keep the whole dashboard
+         looking alive during the one wait. */
+      tilesHost.appendChild(HVUI.el('div', { class: 'tiles' }, [
+        HVUI.skeleton(2), HVUI.skeleton(2), HVUI.skeleton(2), HVUI.skeleton(2) ]));
+      myTasksHost.appendChild(HVUI.skeleton(4));
+      questHost.appendChild(HVUI.el('div', { class: 'card' }, HVUI.skeleton(3)));
+      annCard.appendChild(HVUI.skeleton(3));
+      ciCard.appendChild(HVUI.skeleton(4));
       HVApi.hv('home.summary', {}).then(function (s) {
         var ok = s && s.ok;
         HVTaskBoard.myTasks(myTasksHost, ok ? s.myTasks : undefined);

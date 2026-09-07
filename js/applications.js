@@ -104,7 +104,12 @@ var HVAppsView = (function () {
 
   function appCard(body, r, a) {
     var st = STATUS[a.status] || STATUS['new'];
-    var teams = teamName(r, a.team) + (a.team2 ? ' · 2nd: ' + teamName(r, a.team2) : '');
+    var t2Display = '';
+    if (a.team2) {
+      var parts = a.team2.split(',').map(function (k) { return teamName(r, k.trim()); });
+      t2Display = (parts.length > 1 ? ' · Also: ' : ' · 2nd: ') + parts.join(', ');
+    }
+    var teams = teamName(r, a.team) + t2Display;
 
     var head = el('div', { class: 'row', style: 'gap:8px;align-items:baseline' }, [
       el('div', { style: 'font-weight:700;font-family:var(--display)', text: a.name }),

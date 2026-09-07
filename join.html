@@ -5,7 +5,7 @@
   <title>#Hash · Join the club</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#FFF3D9">
-  <meta name="description" content="Apply to join #Hash — pick your team: Events, Tech, PR or Socials.">
+  <meta name="description" content="Apply to join #Hash — pick your team: Events, Tech, PR, Socials, or Editorial.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@500;600;700&family=VT323&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -56,13 +56,10 @@
     <form id="jnForm" class="card" style="margin-top:14px" novalidate>
       <div id="jnBanner"></div>
 
-      <div class="jn-field"><label>Pick your team *</label></div>
-      <div class="jn-teams" id="jnTeams"></div>
-
       <div class="jn-field">
-        <label for="jnTeam2">Second choice (optional)</label>
-        <select id="jnTeam2"><option value="">No second choice</option></select>
+        <label>Pick your team(s) * <span style="font-family:var(--sans,sans-serif);font-size:12px;opacity:0.75;font-weight:normal">(multiple choice — select all that interest you)</span></label>
       </div>
+      <div class="jn-teams" id="jnTeams"></div>
 
       <div class="jn-grid2">
         <div class="jn-field"><label for="jnName">Full name *</label>
@@ -117,18 +114,20 @@
     /* Fallback team list — keep in sync with JA_TEAMS in the backend's Join.js.
        The live list from join.info wins whenever the server is reachable. */
     var TEAMS = [
-      { key: 'events',  name: 'Events',
+      { key: 'events',    name: 'Events',
         blurb: 'Plan and run everything we host — logistics, venues, schedules and the on-ground crew on event day.' },
-      { key: 'tech',    name: 'Tech',
+      { key: 'tech',      name: 'Tech',
         blurb: 'Build the projects, workshops and tools — AI, robotics, cybersecurity, web. The maker core of the club.' },
-      { key: 'pr',      name: 'PR',
+      { key: 'pr',        name: 'PR',
         blurb: 'The club\'s voice — outreach, sponsors, speaker invites and collabs with other clubs and colleges.' },
-      { key: 'socials', name: 'Socials',
-        blurb: 'Content and community — Instagram and LinkedIn, posters, reels, photos and the memes.' }
+      { key: 'socials',   name: 'Socials',
+        blurb: 'Content and community — Instagram and LinkedIn, posters, reels, photos and the memes.' },
+      { key: 'editorial', name: 'Editorial',
+        blurb: 'Focus on report writing and editing — newsletters, event reports, documentation and publishing.' }
     ];
-    var picked = '';
+    var pickedTeams = [];
     var closed = false;
-    var DEGREES = ['B.Sc', 'B.C.A', 'B.Tech', 'B.Com', 'B.A', 'M.Sc', 'M.C.A', 'M.Tech', 'Other'];
+    var DEGREES = ['B.Sc', 'M.Sc'];
     var INTERESTS = ['AI / ML', 'Robotics', 'Cybersecurity', 'Web / App Dev', 'Design',
                      'Content / Media', 'Electronics', 'Competitive Coding', 'Event Ops'];
     var interestsOn = {};
@@ -158,37 +157,64 @@
       div.scrollIntoView({ block: 'nearest' });
     }
 
+    function getOrdinal(n) {
+      if (n === 1) return '1st';
+      if (n === 2) return '2nd';
+      if (n === 3) return '3rd';
+      return n + 'th';
+    }
+
     function renderTeams() {
       var host = $('jnTeams');
       host.innerHTML = '';
       TEAMS.forEach(function (t) {
+        var idx = pickedTeams.indexOf(t.key);
+        var isPicked = idx > -1;
         var b = document.createElement('button');
         b.type = 'button';
-        b.className = 'jn-team' + (picked === t.key ? ' on' : '');
-        b.setAttribute('role', 'radio');
-        b.setAttribute('aria-checked', picked === t.key ? 'true' : 'false');
-        var nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = t.name;
-        var bl = document.createElement('div'); bl.className = 'bl'; bl.textContent = t.blurb;
-        b.appendChild(nm); b.appendChild(bl);
-        b.addEventListener('click', function () { picked = t.key; renderTeams(); renderTeam2(); });
+        b.className = 'jn-team' + (isPicked ? ' on' : '');
+        b.setAttribute('role', 'checkbox');
+        b.setAttribute('aria-checked', isPicked ? 'true' : 'false');
+
+        var topRow = document.createElement('div');
+        topRow.style.display = 'flex';
+        topRow.style.justifyContent = 'space-between';
+        topRow.style.alignItems = 'center';
+        topRow.style.gap = '6px';
+
+        var nm = document.createElement('div');
+        nm.className = 'nm';
+        nm.textContent = t.name;
+        topRow.appendChild(nm);
+
+        if (isPicked) {
+          var tag = document.createElement('span');
+          tag.className = 'small';
+          tag.style.fontSize = '11px';
+          tag.style.padding = '2px 6px';
+          tag.style.border = '1px solid currentColor';
+          tag.style.fontFamily = "var(--mono, 'VT323', monospace)";
+          tag.textContent = (pickedTeams.length > 1) ? (getOrdinal(idx + 1) + ' choice') : 'Selected';
+          topRow.appendChild(tag);
+        }
+
+        var bl = document.createElement('div');
+        bl.className = 'bl';
+        bl.textContent = t.blurb;
+
+        b.appendChild(topRow);
+        b.appendChild(bl);
+        b.addEventListener('click', function () {
+          var i = pickedTeams.indexOf(t.key);
+          if (i > -1) {
+            pickedTeams.splice(i, 1);
+          } else {
+            pickedTeams.push(t.key);
+          }
+          renderTeams();
+        });
         host.appendChild(b);
       });
-    }
-
-    function renderTeam2() {
-      var sel = $('jnTeam2');
-      var keep = sel.value;
-      sel.innerHTML = '';
-      var none = document.createElement('option');
-      none.value = ''; none.textContent = 'No second choice';
-      sel.appendChild(none);
-      TEAMS.forEach(function (t) {
-        if (t.key === picked) return;
-        var o = document.createElement('option');
-        o.value = t.key; o.textContent = t.name;
-        sel.appendChild(o);
-      });
-      if (keep && keep !== picked) sel.value = keep;
     }
 
     function renderSem() {
@@ -202,6 +228,7 @@
 
     function renderDegrees() {
       var sel = $('jnDegree');
+      sel.innerHTML = '<option value="">Select degree…</option>';
       DEGREES.forEach(function (d) {
         var o = document.createElement('option');
         o.value = d; o.textContent = d;
@@ -239,7 +266,7 @@
       ev.preventDefault();
       if (closed) return;
       var errs = [];
-      if (!picked) errs.push('Pick the team you want to join.');
+      if (!pickedTeams.length) errs.push('Pick at least one team you want to join.');
       if (!$('jnName').value.trim()) errs.push('Tell us your name.');
       if (!$('jnEmail').value.trim()) errs.push('Enter your email address.');
       if (!$('jnMobile').value.trim()) errs.push('Enter your mobile number.');
@@ -254,7 +281,10 @@
         name: $('jnName').value, usn: $('jnUsn').value, email: $('jnEmail').value,
         mobile: $('jnMobile').value, degree: $('jnDegree').value, course: $('jnCourse').value,
         semester: $('jnSem').value, section: $('jnSection').value, interests: pickedInterests(),
-        team: picked, team2: $('jnTeam2').value, why: $('jnWhy').value,
+        teams: pickedTeams.slice(),
+        team: pickedTeams[0] || '',
+        team2: pickedTeams.length > 1 ? pickedTeams.slice(1).join(', ') : '',
+        why: $('jnWhy').value,
         website: $('jnWebsite').value
       }).then(function (r) {
         btn.disabled = false; btn.textContent = 'Apply to join';
@@ -288,7 +318,8 @@
       var eb = document.createElement('div'); eb.className = 'eyebrow';
       eb.textContent = updated ? '// application updated' : '// application received';
       var h = document.createElement('h2');
-      h.textContent = (updated ? 'Updated — you\'re down for ' : 'You\'re in the queue for ') + teamName(picked) + '.';
+      var tNames = pickedTeams.map(teamName).join(' & ');
+      h.textContent = (updated ? 'Updated — you\'re down for ' : 'You\'re in the queue for ') + (tNames || 'the club') + '.';
       var p = document.createElement('p'); p.className = 'section-sub';
       p.textContent = 'The crew will reach you on the number and email you gave, usually within a few days. Applying again with the same USN or email just updates this application.';
       card.appendChild(eb); card.appendChild(h); card.appendChild(p);
@@ -296,10 +327,10 @@
     }
 
     /* boot */
-    renderTeams(); renderTeam2(); renderSem(); renderDegrees(); renderInterests();
+    renderTeams(); renderSem(); renderDegrees(); renderInterests();
     $('jnForm').addEventListener('submit', submit);
     post('hv.join.info', {}).then(function (r) {
-      if (r && r.ok && r.teams && r.teams.length) { TEAMS = r.teams; renderTeams(); renderTeam2(); }
+      if (r && r.ok && r.teams && r.teams.length) { TEAMS = r.teams; renderTeams(); }
       if (r && r.ok && r.closed) setClosed();
     });
   })();

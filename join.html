@@ -104,6 +104,22 @@
 
     <div id="jnDone" class="card hidden" style="margin-top:14px"></div>
 
+    <div class="card" id="jnAuditionGroup" style="margin-top:18px;text-align:center">
+      <div class="eyebrow" style="text-align:left">// audition updates</div>
+      <h2 style="margin:8px 0 6px;font-size:18px">HASH Auditions WhatsApp Group</h2>
+      <p class="section-sub" style="margin:0 0 16px;font-size:13.5px">
+        Scan the QR code or tap below to join the official auditions group for schedules, venue updates, and announcements.
+      </p>
+      <a href="https://chat.whatsapp.com/I2nRhZkcEOv87Omt5AnVKZ" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">
+        <img src="assets/hash-auditions-card.jpg" alt="HASH Auditions WhatsApp QR Code" style="width:240px;max-width:100%;height:auto;border:2px solid var(--line,#17131f);box-shadow:3px 3px 0 var(--line,#17131f);border-radius:12px;background:#fff;display:block;margin:0 auto">
+      </a>
+      <div style="margin-top:14px">
+        <a class="btn primary" href="https://chat.whatsapp.com/I2nRhZkcEOv87Omt5AnVKZ" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px">
+          <span>Join WhatsApp Group →</span>
+        </a>
+      </div>
+    </div>
+
     <div class="jn-foot">Already a member? <a href="./">Sign in to the #Hash OS</a></div>
   </div>
 
@@ -321,7 +337,7 @@
       var tNames = pickedTeams.map(teamName).join(' & ');
       h.textContent = (updated ? 'Updated — you\'re down for ' : 'You\'re in the queue for ') + (tNames || 'the club') + '.';
       var p = document.createElement('p'); p.className = 'section-sub';
-      p.textContent = 'The crew will reach you on the number and email you gave, usually within a few days. Applying again with the same USN or email just updates this application.';
+      p.textContent = 'The crew will reach you on the number and email you gave, usually within a few days. In the meantime, join the HASH Auditions WhatsApp group below for real-time announcements!';
       card.appendChild(eb); card.appendChild(h); card.appendChild(p);
       window.scrollTo(0, 0);
     }

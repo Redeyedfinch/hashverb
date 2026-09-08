@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>#Hash · Join the club</title>
+  <title>#Hash · Join the club & study domains</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#FFF3D9">
-  <meta name="description" content="Apply to join #Hash — pick your team: Events, Tech, PR, Socials, or Editorial.">
+  <meta name="description" content="Apply to join #Hash — choose your study domain (AI, Robotics, Cybersecurity) and pick your team (Events, Tech, PR, Socials, Editorial, or Classes only).">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@500;600;700&family=VT323&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -16,6 +16,8 @@
     .jn-brand { display: flex; align-items: baseline; gap: 10px; margin-bottom: 18px; }
     .jn-brand .b { font-family: var(--pixel, 'Press Start 2P', monospace); font-size: 18px; }
     .jn-brand .t { font-family: var(--mono, 'VT323', monospace); font-size: 18px; opacity: .7; }
+    .jn-domains { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 0 4px; }
+    @media (max-width: 540px) { .jn-domains { grid-template-columns: 1fr; } }
     .jn-teams { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 4px; }
     @media (max-width: 460px) { .jn-teams { grid-template-columns: 1fr; } }
     .jn-team { text-align: left; cursor: pointer; padding: 12px; background: var(--panel, #fff);
@@ -27,7 +29,7 @@
     .jn-team.on .bl { opacity: .9; }
     .jn-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     @media (max-width: 460px) { .jn-grid2 { grid-template-columns: 1fr; } }
-    .jn-field { margin-top: 12px; }
+    .jn-field { margin-top: 14px; }
     .jn-field label { display: block; font-family: var(--mono, 'VT323', monospace); font-size: 15px;
                       letter-spacing: .04em; margin-bottom: 4px; }
     .jn-field input, .jn-field select, .jn-field textarea {
@@ -42,24 +44,31 @@
 </head>
 <body>
   <div class="jn-wrap">
-    <div class="jn-brand"><span class="b">#HASH</span><span class="t">// join the crew</span></div>
+    <div class="jn-brand"><span class="b">#HASH</span><span class="t">// join the club</span></div>
 
     <div class="card">
-      <div class="eyebrow">// recruitment</div>
+      <div class="eyebrow">// registration & membership</div>
       <h1 style="margin:6px 0 8px">Join #Hash.</h1>
       <p class="section-sub" style="margin:0">
-        We're not recruiting by domain any more — you join the club as a member of a
-        <strong>team</strong>. Pick where you want to work; the crew will contact you.
+        Choose the domain(s) you want to study in (<strong>AI</strong>, <strong>Robotics</strong>, <strong>Cybersecurity</strong>).
+        Then pick an operational team if you'd like to help run the club, or select <strong>None (Classes only)</strong> if you just want to attend domain classes and workshops!
       </p>
     </div>
 
     <form id="jnForm" class="card" style="margin-top:14px" novalidate>
       <div id="jnBanner"></div>
 
+      <!-- Domain Selection (First Choice, Multiple Choice) -->
       <div class="jn-field">
-        <label>Pick your team(s) * <span style="font-family:var(--sans,sans-serif);font-size:12px;opacity:0.75;font-weight:normal">(multiple choice — select all that interest you)</span></label>
+        <label>1. Choose your domain(s) to study * <span style="font-family:var(--sans,sans-serif);font-size:12px;opacity:0.75;font-weight:normal">(multiple choice — select all you want to attend classes in)</span></label>
+        <div class="jn-domains" id="jnDomains"></div>
       </div>
-      <div class="jn-teams" id="jnTeams"></div>
+
+      <!-- Team Selection with None Option -->
+      <div class="jn-field" style="margin-top:20px">
+        <label>2. Pick your team(s) * <span style="font-family:var(--sans,sans-serif);font-size:12px;opacity:0.75;font-weight:normal">(multiple choice — pick operational team(s), or select None)</span></label>
+        <div class="jn-teams" id="jnTeams"></div>
+      </div>
 
       <div class="jn-grid2">
         <div class="jn-field"><label for="jnName">Full name *</label>
@@ -75,7 +84,7 @@
       </div>
       <div class="jn-grid2">
         <div class="jn-field"><label for="jnDegree">Degree *</label>
-          <select id="jnDegree"><option value="">Select…</option></select></div>
+          <select id="jnDegree"><option value="">Select degree…</option></select></div>
         <div class="jn-field"><label for="jnCourse">Course / branch *</label>
           <input id="jnCourse" maxlength="60" placeholder="e.g. Computer Science"></div>
       </div>
@@ -86,29 +95,25 @@
           <input id="jnSection" maxlength="24" placeholder="e.g. A"></div>
       </div>
       <div class="jn-field">
-        <label>Interests (optional)</label>
-        <div class="jn-teams" id="jnInterests" style="grid-template-columns:1fr 1fr 1fr"></div>
-      </div>
-      <div class="jn-field">
-        <label for="jnWhy">Why this team? (optional)</label>
-        <textarea id="jnWhy" maxlength="600" placeholder="One or two lines is plenty."></textarea>
+        <label for="jnWhy">Why are you joining? (optional)</label>
+        <textarea id="jnWhy" maxlength="600" placeholder="Tell us what you hope to learn, build, or contribute."></textarea>
       </div>
 
       <!-- honeypot: humans never see or fill this -->
       <input class="jn-hp" id="jnWebsite" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
 
       <div class="jn-field">
-        <button class="btn primary block" id="jnSubmit" type="submit">Apply to join</button>
+        <button class="btn primary block" id="jnSubmit" type="submit">Submit Registration</button>
       </div>
     </form>
 
     <div id="jnDone" class="card hidden" style="margin-top:14px"></div>
 
     <div class="card" id="jnAuditionGroup" style="margin-top:18px;text-align:center">
-      <div class="eyebrow" style="text-align:left">// audition updates</div>
-      <h2 style="margin:8px 0 6px;font-size:18px">HASH Auditions WhatsApp Group</h2>
+      <div class="eyebrow" style="text-align:left">// audition & intake updates</div>
+      <h2 style="margin:8px 0 6px;font-size:18px">HASH WhatsApp Community & Group</h2>
       <p class="section-sub" style="margin:0 0 16px;font-size:13.5px">
-        Scan the QR code or tap below to join the official auditions group for schedules, venue updates, and announcements.
+        Scan the QR code or tap below to join the official group for schedules, venue updates, class announcements, and auditions.
       </p>
       <a href="https://chat.whatsapp.com/I2nRhZkcEOv87Omt5AnVKZ" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">
         <img src="assets/hash-auditions-card.jpg" alt="HASH Auditions WhatsApp QR Code" style="width:240px;max-width:100%;height:auto;border:2px solid var(--line,#17131f);box-shadow:3px 3px 0 var(--line,#17131f);border-radius:12px;background:#fff;display:block;margin:0 auto">
@@ -127,8 +132,16 @@
   <script>
   (function () {
     'use strict';
-    /* Fallback team list — keep in sync with JA_TEAMS in the backend's Join.js.
-       The live list from join.info wins whenever the server is reachable. */
+
+    /* Study domains: AI, Robotics, Cybersecurity */
+    var DOMAINS = [
+      { key: 'ai',           name: 'AI',           blurb: 'Machine learning, neural networks, computer vision, NLP & generative AI.' },
+      { key: 'robotics',     name: 'Robotics',     blurb: 'Hardware prototyping, microcontrollers (Arduino/ESP32), sensors & automation.' },
+      { key: 'cybersecurity', name: 'Cybersecurity', blurb: 'Ethical hacking, network defense, penetration testing, CTFs & digital forensics.' }
+    ];
+    var pickedDomains = [];
+
+    /* Operational teams + None (Classes only) null choice */
     var TEAMS = [
       { key: 'events',    name: 'Events',
         blurb: 'Plan and run everything we host — logistics, venues, schedules and the on-ground crew on event day.' },
@@ -139,14 +152,13 @@
       { key: 'socials',   name: 'Socials',
         blurb: 'Content and community — Instagram and LinkedIn, posters, reels, photos and the memes.' },
       { key: 'editorial', name: 'Editorial',
-        blurb: 'Focus on report writing and editing — newsletters, event reports, documentation and publishing.' }
+        blurb: 'Focus on report writing and editing — newsletters, event reports, documentation and publishing.' },
+      { key: 'none',      name: 'None (Classes only)',
+        blurb: 'I don\'t want to join an operational team — I just want to join the domain for classes.' }
     ];
     var pickedTeams = [];
     var closed = false;
     var DEGREES = ['B.Sc', 'M.Sc'];
-    var INTERESTS = ['AI / ML', 'Robotics', 'Cybersecurity', 'Web / App Dev', 'Design',
-                     'Content / Media', 'Electronics', 'Competitive Coding', 'Event Ops'];
-    var interestsOn = {};
 
     function $(id) { return document.getElementById(id); }
 
@@ -180,6 +192,59 @@
       return n + 'th';
     }
 
+    function renderDomains() {
+      var host = $('jnDomains');
+      host.innerHTML = '';
+      DOMAINS.forEach(function (d) {
+        var idx = pickedDomains.indexOf(d.key);
+        var isPicked = idx > -1;
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'jn-team' + (isPicked ? ' on' : '');
+        b.setAttribute('role', 'checkbox');
+        b.setAttribute('aria-checked', isPicked ? 'true' : 'false');
+
+        var topRow = document.createElement('div');
+        topRow.style.display = 'flex';
+        topRow.style.justifyContent = 'space-between';
+        topRow.style.alignItems = 'center';
+        topRow.style.gap = '6px';
+
+        var nm = document.createElement('div');
+        nm.className = 'nm';
+        nm.textContent = d.name;
+        topRow.appendChild(nm);
+
+        if (isPicked) {
+          var tag = document.createElement('span');
+          tag.className = 'small';
+          tag.style.fontSize = '11px';
+          tag.style.padding = '2px 6px';
+          tag.style.border = '1px solid currentColor';
+          tag.style.fontFamily = "var(--mono, 'VT323', monospace)";
+          tag.textContent = (pickedDomains.length > 1) ? (getOrdinal(idx + 1) + ' choice') : 'Selected';
+          topRow.appendChild(tag);
+        }
+
+        var bl = document.createElement('div');
+        bl.className = 'bl';
+        bl.textContent = d.blurb;
+
+        b.appendChild(topRow);
+        b.appendChild(bl);
+        b.addEventListener('click', function () {
+          var i = pickedDomains.indexOf(d.key);
+          if (i > -1) {
+            pickedDomains.splice(i, 1);
+          } else {
+            pickedDomains.push(d.key);
+          }
+          renderDomains();
+        });
+        host.appendChild(b);
+      });
+    }
+
     function renderTeams() {
       var host = $('jnTeams');
       host.innerHTML = '';
@@ -210,7 +275,11 @@
           tag.style.padding = '2px 6px';
           tag.style.border = '1px solid currentColor';
           tag.style.fontFamily = "var(--mono, 'VT323', monospace)";
-          tag.textContent = (pickedTeams.length > 1) ? (getOrdinal(idx + 1) + ' choice') : 'Selected';
+          if (t.key === 'none') {
+            tag.textContent = 'Classes only';
+          } else {
+            tag.textContent = (pickedTeams.length > 1) ? (getOrdinal(idx + 1) + ' choice') : 'Selected';
+          }
           topRow.appendChild(tag);
         }
 
@@ -221,11 +290,24 @@
         b.appendChild(topRow);
         b.appendChild(bl);
         b.addEventListener('click', function () {
-          var i = pickedTeams.indexOf(t.key);
-          if (i > -1) {
-            pickedTeams.splice(i, 1);
+          if (t.key === 'none') {
+            var hadNone = pickedTeams.indexOf('none') > -1;
+            if (hadNone) {
+              pickedTeams = [];
+            } else {
+              pickedTeams = ['none']; // Mutually exclusive: deselects operational teams
+            }
           } else {
-            pickedTeams.push(t.key);
+            var noneIdx = pickedTeams.indexOf('none');
+            if (noneIdx > -1) {
+              pickedTeams.splice(noneIdx, 1); // Deselect 'none' when choosing an operational team
+            }
+            var i = pickedTeams.indexOf(t.key);
+            if (i > -1) {
+              pickedTeams.splice(i, 1);
+            } else {
+              pickedTeams.push(t.key);
+            }
           }
           renderTeams();
         });
@@ -235,6 +317,7 @@
 
     function renderSem() {
       var sel = $('jnSem');
+      sel.innerHTML = '<option value="">Select…</option>';
       for (var i = 1; i <= 8; i++) {
         var o = document.createElement('option');
         o.value = String(i); o.textContent = 'Semester ' + i;
@@ -250,27 +333,11 @@
         o.value = d; o.textContent = d;
         sel.appendChild(o);
       });
+      var otherOpt = document.createElement('option');
+      otherOpt.value = 'Other';
+      otherOpt.textContent = 'Other';
+      sel.appendChild(otherOpt);
     }
-
-    function renderInterests() {
-      var host = $('jnInterests');
-      host.innerHTML = '';
-      INTERESTS.forEach(function (it) {
-        var b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'jn-team' + (interestsOn[it] ? ' on' : '');
-        b.style.padding = '9px 10px';
-        b.setAttribute('aria-pressed', interestsOn[it] ? 'true' : 'false');
-        var nm = document.createElement('div'); nm.className = 'nm'; nm.style.fontSize = '13px'; nm.textContent = it;
-        b.appendChild(nm);
-        b.addEventListener('click', function () {
-          if (interestsOn[it]) delete interestsOn[it]; else interestsOn[it] = true;
-          renderInterests();
-        });
-        host.appendChild(b);
-      });
-    }
-    function pickedInterests() { return Object.keys(interestsOn); }
 
     function setClosed() {
       closed = true;
@@ -278,11 +345,22 @@
       $('jnSubmit').disabled = true;
     }
 
+    function domainName(key) {
+      for (var i = 0; i < DOMAINS.length; i++) if (DOMAINS[i].key === key) return DOMAINS[i].name;
+      return key;
+    }
+
+    function teamName(key) {
+      for (var i = 0; i < TEAMS.length; i++) if (TEAMS[i].key === key) return TEAMS[i].name;
+      return key;
+    }
+
     function submit(ev) {
       ev.preventDefault();
       if (closed) return;
       var errs = [];
-      if (!pickedTeams.length) errs.push('Pick at least one team you want to join.');
+      if (!pickedDomains.length) errs.push('Choose at least one domain to study (AI, Robotics, Cybersecurity).');
+      if (!pickedTeams.length) errs.push('Pick a team to join, or select None (Classes only).');
       if (!$('jnName').value.trim()) errs.push('Tell us your name.');
       if (!$('jnEmail').value.trim()) errs.push('Enter your email address.');
       if (!$('jnMobile').value.trim()) errs.push('Enter your mobile number.');
@@ -296,14 +374,16 @@
       post('hv.join.apply', {
         name: $('jnName').value, usn: $('jnUsn').value, email: $('jnEmail').value,
         mobile: $('jnMobile').value, degree: $('jnDegree').value, course: $('jnCourse').value,
-        semester: $('jnSem').value, section: $('jnSection').value, interests: pickedInterests(),
+        semester: $('jnSem').value, section: $('jnSection').value,
+        domains: pickedDomains.slice(),
+        interests: pickedDomains.slice(),
         teams: pickedTeams.slice(),
         team: pickedTeams[0] || '',
-        team2: pickedTeams.length > 1 ? pickedTeams.slice(1).join(', ') : '',
+        team2: (pickedTeams.length > 1 && pickedTeams[0] !== 'none') ? pickedTeams.slice(1).join(', ') : '',
         why: $('jnWhy').value,
         website: $('jnWebsite').value
       }).then(function (r) {
-        btn.disabled = false; btn.textContent = 'Apply to join';
+        btn.disabled = false; btn.textContent = 'Submit Registration';
         if (r && r.ok) return done(r.updated === true);
         showErrors((r && r.errors) || ['Something went wrong. Please try again.']);
       });
@@ -321,33 +401,39 @@
       banner('bad', wrap);
     }
 
-    function teamName(key) {
-      for (var i = 0; i < TEAMS.length; i++) if (TEAMS[i].key === key) return TEAMS[i].name;
-      return key;
-    }
-
     function done(updated) {
       $('jnForm').classList.add('hidden');
       var card = $('jnDone');
       card.classList.remove('hidden');
       card.innerHTML = '';
       var eb = document.createElement('div'); eb.className = 'eyebrow';
-      eb.textContent = updated ? '// application updated' : '// application received';
+      eb.textContent = updated ? '// registration updated' : '// registration received';
       var h = document.createElement('h2');
-      var tNames = pickedTeams.map(teamName).join(' & ');
-      h.textContent = (updated ? 'Updated — you\'re down for ' : 'You\'re in the queue for ') + (tNames || 'the club') + '.';
+      var dNames = pickedDomains.map(domainName).join(' & ');
+      var isClassesOnly = pickedTeams.length === 1 && pickedTeams[0] === 'none';
+      if (isClassesOnly) {
+        h.textContent = (updated ? 'Updated — enrolled for Classes only in ' : 'You\'re registered for Classes only in ') + dNames + '.';
+      } else {
+        var tNames = pickedTeams.filter(function (k) { return k !== 'none'; }).map(teamName).join(' & ');
+        h.textContent = (updated ? 'Updated — down for ' : 'You\'re in the queue for ') + (tNames || 'the club') + ' (' + dNames + ').';
+      }
       var p = document.createElement('p'); p.className = 'section-sub';
-      p.textContent = 'The crew will reach you on the number and email you gave, usually within a few days. In the meantime, join the HASH Auditions WhatsApp group below for real-time announcements!';
+      p.textContent = isClassesOnly
+        ? 'The crew will reach you on the number and email you gave regarding domain class schedules, session links and workshops. In the meantime, join the WhatsApp group below for real-time announcements!'
+        : 'The crew will reach you on the number and email you gave regarding auditions, schedules, and club updates. In the meantime, join the WhatsApp group below for real-time announcements!';
       card.appendChild(eb); card.appendChild(h); card.appendChild(p);
       window.scrollTo(0, 0);
     }
 
     /* boot */
-    renderTeams(); renderSem(); renderDegrees(); renderInterests();
+    renderDomains(); renderTeams(); renderSem(); renderDegrees();
     $('jnForm').addEventListener('submit', submit);
     post('hv.join.info', {}).then(function (r) {
-      if (r && r.ok && r.teams && r.teams.length) { TEAMS = r.teams; renderTeams(); }
-      if (r && r.ok && r.closed) setClosed();
+      if (r && r.ok) {
+        if (r.teams && r.teams.length) { TEAMS = r.teams; renderTeams(); }
+        if (r.domains && r.domains.length) { DOMAINS = r.domains; renderDomains(); }
+        if (r.closed) setClosed();
+      }
     });
   })();
   </script>

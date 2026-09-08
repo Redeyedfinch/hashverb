@@ -25,43 +25,70 @@
     .selection-status { font-family: var(--mono, 'VT323', monospace); font-size: 15px; color: #524b5c; margin-top: 8px; text-align: right; }
     .selection-status b { color: #0FA6AE; font-size: 16px; }
 
-    /* Domain Grid (Class Grid) */
-    .class-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 10px 0 4px; }
-    @media (max-width: 580px) { .class-grid { grid-template-columns: 1fr; } }
-    .class-card { border: 2px solid var(--line, #17131f); padding: 16px 14px; background: var(--panel, #fff);
-                 cursor: pointer; transition: transform .12s, box-shadow .12s, background .15s; text-align: left;
-                 box-shadow: 3px 3px 0 var(--line, #17131f); position: relative; }
+    /* Domain Grid (Class Grid) — authentic Apps Script registration styling */
+    .class-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 12px 0 4px; }
+    @media (max-width: 600px) { .class-grid { grid-template-columns: 1fr; } }
+    .class-card {
+      border: 2px solid var(--line, #17131f); padding: 18px 14px; background: var(--panel, #fff);
+      cursor: pointer; transition: transform .12s, box-shadow .12s, background .15s; text-align: center;
+      box-shadow: 3px 3px 0 var(--line, #17131f); position: relative;
+    }
     .class-card:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--line, #17131f); }
-    .class-card.on { background: #17131f; color: #FFF3D9; box-shadow: 4px 4px 0 var(--line, #17131f); }
-    .class-card .ci { width: 40px; height: 40px; margin-bottom: 10px; display: grid; place-items: center;
-                      background: var(--panel, #fff); border: 2px solid var(--line, #17131f); font-size: 20px; }
-    .class-card.on .ci { background: #FFF3D9; }
-    .class-card h4 { font-family: var(--display, 'Space Grotesk', sans-serif); font-size: 15px; font-weight: 700; margin: 0 0 6px; }
-    .class-card p { font-size: 12px; line-height: 1.4; opacity: .85; margin: 0 0 10px; }
-    .class-card .tags { display: flex; flex-wrap: wrap; gap: 5px; }
-    .class-card .tag { font-family: var(--mono, 'VT323', monospace); font-size: 13px; border: 1px solid currentColor; padding: 1px 6px; }
-    .class-check { position: absolute; top: 10px; right: 10px; width: 22px; height: 22px; border: 2px solid var(--line, #17131f);
-                   border-radius: 50%; background: #fff; display: grid; place-items: center; font-size: 12px; font-weight: bold; color: transparent; }
-    .class-card.on .class-check { background: #FFF3D9; color: #17131f; }
+    .class-card.on { background: var(--cc, #E94560); color: #fff; box-shadow: 4px 4px 0 var(--line, #17131f); }
+    .class-card.on h4, .class-card.on .sl { color: #fff; }
+    .class-card .ci {
+      width: 46px; height: 46px; margin: 0 auto 12px; display: grid; place-items: center;
+      background: var(--cc, #17131f); border: 2px solid var(--line, #17131f); color: #fff;
+    }
+    .class-card .ci svg { width: 24px; height: 24px; stroke: currentColor; }
+    .class-card.on .ci { background: #fff; color: var(--line, #17131f); }
+    .class-card h4 { font-family: var(--display, 'Space Grotesk', sans-serif); font-size: 15px; font-weight: 700; margin: 0 0 6px; color: var(--ink, #17131f); }
+    .class-card p { font-size: 12px; line-height: 1.4; opacity: .9; margin: 0 0 10px; }
+    .class-check {
+      position: absolute; top: 10px; right: 10px; width: 22px; height: 22px;
+      border: 2px solid var(--line, #17131f); border-radius: 50%; background: #fff;
+      display: grid; place-items: center; font-size: 12px; font-weight: bold; color: transparent;
+      transition: all .15s;
+    }
+    .class-card.on .class-check { background: #fff; color: var(--line, #17131f); }
+    .stat-bars { margin-top: 12px; display: grid; gap: 7px; }
+    .stat-bar { display: grid; grid-template-columns: 52px 1fr; gap: 8px; align-items: center; }
+    .stat-bar .sl { font-family: var(--mono, 'VT323', monospace); font-size: 14px; color: var(--ink-dim, #524b5c); text-align: left; }
+    .stat-bar .st { height: 9px; background: #fff; border: 2px solid var(--line, #17131f); overflow: hidden; }
+    .stat-bar .st i { display: block; height: 100%; background: var(--line, #17131f); }
+    .class-card.on .st { background: rgba(255, 255, 255, 0.35); border-color: #fff; }
+    .class-card.on .st i { background: #fff; }
 
     /* Team Grid */
     .team-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 10px; }
     @media (max-width: 580px) { .team-grid { grid-template-columns: 1fr; } }
-    .team-card { border: 2px solid var(--line, #17131f); padding: 14px; background: var(--panel, #fff);
-                 cursor: pointer; transition: transform .12s, box-shadow .12s, background .12s;
-                 box-shadow: 3px 3px 0 var(--line, #17131f); display: flex; flex-direction: column; gap: 6px; position: relative; text-align: left; }
+    .team-card {
+      border: 2px solid var(--line, #17131f); padding: 14px 16px; background: var(--panel, #fff);
+      cursor: pointer; transition: transform .12s, box-shadow .12s, background .12s;
+      box-shadow: 3px 3px 0 var(--line, #17131f); display: flex; flex-direction: column; gap: 6px;
+      position: relative; text-align: left;
+    }
     .team-card:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--line, #17131f); }
     .team-card.on { background: #e6fbf5; border-color: var(--line, #17131f); box-shadow: 4px 4px 0 var(--line, #17131f); }
     .team-card.team-none { border-style: dashed; border-width: 2px; }
     .team-card.team-none.on { background: #fffde6; }
     .team-card.on .team-sel-tag { display: inline-block; }
-    .team-sel-tag { display: none; position: absolute; top: 10px; right: 10px; font-family: var(--pixel, 'Press Start 2P', monospace);
-                    font-size: 7.5px; background: var(--line, #17131f); color: #FFF3D9; padding: 3px 6px; }
-    .team-card-head { display: flex; align-items: center; gap: 8px; padding-right: 60px; }
-    .team-icon { font-size: 20px; line-height: 1; }
-    .team-name { font-size: 15px; font-weight: 700; color: var(--ink, #17131f); font-family: var(--display, 'Space Grotesk', sans-serif); }
-    .team-badge { font-family: var(--pixel, 'Press Start 2P', monospace); font-size: 8px; padding: 3px 6px;
-                  background: #fbf8ef; border: 1px solid var(--line, #17131f); color: #524b5c; }
+    .team-sel-tag {
+      display: none; position: absolute; top: 10px; right: 10px;
+      font-family: var(--pixel, 'Press Start 2P', monospace);
+      font-size: 7.5px; background: var(--line, #17131f); color: #FFF3D9; padding: 3px 6px;
+    }
+    .team-card-head { display: flex; align-items: center; gap: 10px; padding-right: 75px; }
+    .team-icon {
+      width: 28px; height: 28px; display: inline-grid; place-items: center;
+      flex-shrink: 0; color: var(--ink, #17131f);
+    }
+    .team-icon svg { width: 22px; height: 22px; stroke: currentColor; }
+    .team-name { font-size: 15.5px; font-weight: 700; color: var(--ink, #17131f); font-family: var(--display, 'Space Grotesk', sans-serif); }
+    .team-badge {
+      font-family: var(--pixel, 'Press Start 2P', monospace); font-size: 8px; padding: 3px 6px;
+      background: #fbf8ef; border: 1px solid var(--line, #17131f); color: #524b5c; margin-left: auto;
+    }
     .team-desc { font-size: 12.5px; line-height: 1.45; color: #524b5c; margin: 2px 0 0; }
 
     /* Form Fields */
@@ -193,32 +220,77 @@
 
     /* Study domains: AI, Robotics, Cybersecurity (Optional) */
     var DOMAINS = [
-      { key: 'ai', name: 'Artificial Intelligence', icon: '🤖',
+      {
+        key: 'ai',
+        name: 'Artificial Intelligence',
+        color: '#0FA6AE',
+        iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V4M8 4h8M9 13v2M15 13v2" stroke-linecap="round"/></svg>',
         blurb: 'Machine learning, deep learning, computer vision and tool-using AI models.',
-        tags: ['Python', 'ML / DL', 'Vision', 'LLMs'] },
-      { key: 'robotics', name: 'Robotics', icon: '🦾',
+        stats: [['Code', 9], ['Math', 8], ['Vision', 7]]
+      },
+      {
+        key: 'robotics',
+        name: 'Robotics',
+        color: '#E94560',
+        iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="9" width="14" height="10" rx="2"/><path d="M12 9V5M12 3v.01M8 14h.01M16 14h.01M9 19v2M15 19v2" stroke-linecap="round"/></svg>',
         blurb: 'Embodied AI — sensors, motors, microcontrollers, perception and control.',
-        tags: ['Arduino', 'Sensors', 'ROS 2', 'Automation'] },
-      { key: 'cybersecurity', name: 'Cybersecurity', icon: '🛡️',
+        stats: [['Build', 8], ['Control', 9], ['Code', 6]]
+      },
+      {
+        key: 'cybersecurity',
+        name: 'Cybersecurity',
+        color: '#F4A400',
+        iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z" stroke-linejoin="round"/><path d="M9.5 12l1.8 1.8L15 10" stroke-linecap="round" stroke-linejoin="round"/></svg>',
         blurb: 'Networking, Linux, web defense, penetration testing, threat analysis and CTFs.',
-        tags: ['Linux', 'OWASP', 'VAPT', 'CTFs'] }
+        stats: [['Recon', 8], ['Defense', 9], ['Exploit', 7]]
+      }
     ];
     var pickedDomains = [];
 
     /* Operational teams + None (Classes only) null choice */
     var TEAMS = [
-      { key: 'none',      name: 'None (Classes only)', icon: '🎓', badge: 'Classes Only',
-        desc: 'I only want to attend technical classes & workshops. No club operational commitments.' },
-      { key: 'editorial', name: 'Editorial',           icon: '✍️', badge: 'Reports & Content',
-        desc: 'Focus on report writing, technical documentation, newsletter publications & editing.' },
-      { key: 'events',    name: 'Events',              icon: '🎪', badge: 'Operations',
-        desc: 'Plan and run everything we host — logistics, venues, schedules & on-ground event crew.' },
-      { key: 'tech',      name: 'Tech',                icon: '💻', badge: 'Engineering',
-        desc: 'Build the club\'s software, bots, infrastructure, workshop labs, hackathons & tools.' },
-      { key: 'socials',   name: 'Socials',             icon: '📱', badge: 'Media & Branding',
-        desc: 'Content and community — Instagram and LinkedIn, posters, reels, photos & memes.' },
-      { key: 'pr',        name: 'PR',                  icon: '🤝', badge: 'Public Relations',
-        desc: 'The club\'s voice — outreach, sponsors, speaker invites & collabs with other clubs.' }
+      {
+        key: 'none',
+        name: 'None (Classes only)',
+        badge: 'Classes Only',
+        iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>',
+        desc: 'I only want to attend technical classes & workshops. No club operational commitments.'
+      },
+      {
+        key: 'events',
+        name: 'Events',
+        badge: 'Operations',
+        iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>',
+        desc: 'Plan and run everything we host — workshops, hackathons, logistics, venues, schedules & on-ground crew.'
+      },
+      {
+        key: 'tech',
+        name: 'Tech',
+        badge: 'Engineering',
+        iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg>',
+        desc: 'Club software development, website, bots, tools, infrastructure & technical projects.'
+      },
+      {
+        key: 'pr',
+        name: 'PR',
+        badge: 'Public Relations',
+        iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+        desc: 'The club\'s voice — outreach, sponsors, speaker invites & collabs with other clubs.'
+      },
+      {
+        key: 'socials',
+        name: 'Socials',
+        badge: 'Media & Branding',
+        iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>',
+        desc: 'Content and community — Instagram and LinkedIn, promotional posters, reels, photos & memes.'
+      },
+      {
+        key: 'editorial',
+        name: 'Editorial',
+        badge: 'Reports & Content',
+        iconSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+        desc: 'Focus on report writing, technical documentation, newsletter publications & editing.'
+      }
     ];
     var pickedTeams = [];
     var closed = false;
@@ -256,6 +328,7 @@
         var isPicked = pickedDomains.indexOf(d.key) > -1;
         var card = document.createElement('div');
         card.className = 'class-card' + (isPicked ? ' on' : '');
+        card.style.setProperty('--cc', d.color);
         card.setAttribute('role', 'checkbox');
         card.setAttribute('aria-checked', isPicked ? 'true' : 'false');
 
@@ -265,7 +338,7 @@
 
         var ci = document.createElement('div');
         ci.className = 'ci';
-        ci.textContent = d.icon;
+        ci.innerHTML = d.iconSvg;
 
         var h4 = document.createElement('h4');
         h4.textContent = d.name;
@@ -273,20 +346,29 @@
         var p = document.createElement('p');
         p.textContent = d.blurb;
 
-        var tags = document.createElement('div');
-        tags.className = 'tags';
-        d.tags.forEach(function (t) {
-          var sp = document.createElement('span');
-          sp.className = 'tag';
-          sp.textContent = t;
-          tags.appendChild(sp);
+        var statBars = document.createElement('div');
+        statBars.className = 'stat-bars';
+        d.stats.forEach(function (s) {
+          var sb = document.createElement('div');
+          sb.className = 'stat-bar';
+          var sl = document.createElement('span');
+          sl.className = 'sl';
+          sl.textContent = s[0];
+          var st = document.createElement('span');
+          st.className = 'st';
+          var fill = document.createElement('i');
+          fill.style.width = (s[1] * 10) + '%';
+          st.appendChild(fill);
+          sb.appendChild(sl);
+          sb.appendChild(st);
+          statBars.appendChild(sb);
         });
 
         card.appendChild(check);
         card.appendChild(ci);
         card.appendChild(h4);
         card.appendChild(p);
-        card.appendChild(tags);
+        card.appendChild(statBars);
 
         card.addEventListener('click', function () {
           var i = pickedDomains.indexOf(d.key);
@@ -323,7 +405,7 @@
 
         var icon = document.createElement('span');
         icon.className = 'team-icon';
-        icon.textContent = t.icon;
+        icon.innerHTML = t.iconSvg;
 
         var name = document.createElement('span');
         name.className = 'team-name';

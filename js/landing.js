@@ -17,8 +17,8 @@ var HVLanding = (function () {
   /* the five teams — same copy as join.html / JA_TEAMS (marketing content, so
      kept inline: the landing must paint instantly with no pre-auth fetch) */
   var TEAMS = [
-    { name: 'Events',    blurb: 'Plan and run everything we host — logistics, venues, schedules and the crew on event day.' },
-    { name: 'Tech',      blurb: 'Build the projects, workshops and tools — AI, robotics, cybersecurity, web. The maker core.' },
+    { name: 'Events',    blurb: 'Plan and run everything we host — workshops, hackathons, logistics, venues, schedules & on-ground crew.' },
+    { name: 'Tech',      blurb: 'Club software development, website, bots, tools, infrastructure & technical projects.' },
     { name: 'PR',        blurb: 'The club\'s voice — outreach, sponsors, speaker invites and collabs with other clubs.' },
     { name: 'Socials',   blurb: 'Content and community — Instagram and LinkedIn, posters, reels, photos and the memes.' },
     { name: 'Editorial', blurb: 'Focus on report writing and editing — newsletters, event reports, documentation and publishing.' }
